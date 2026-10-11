@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TopicVideoCreativeBrief",
+  "description": "Creative brief specification establishing visual identity, sound design, evidence, and human approval for a video",
+  "type": "object",
+  "required": [
+    "title",
+    "base_profile",
+    "visual_mood",
+    "pacing",
+    "transitions",
+    "rationale",
+    "approval"
+  ],
+  "properties": {
+    "title": { "type": "string" },
+    "topic": { "type": "string" },
+    "base_profile": {
+      "type": "string",
+      "description": "Starting art-direction profile (e.g. 'developer_workflow', 'editorial_data_story')"
+    },
+    "visual_mood": {
+      "type": "string",
+      "description": "Target atmosphere and art direction"
+    },
+    "pacing": {
+      "type": "string",
+      "description": "Timing and scene cadence recommendations"
+    },
+    "transitions": {
+      "type": "string",
+      "description": "Scene transition style (e.g. 'clean_cut', 'crossfade')"
+    },
+    "palette": {
+      "type": "object",
+      "description": "Optional custom palette overrides over the base profile",
+      "properties": {
+        "background": { "type": "string" },
+        "foreground": { "type": "string" },
+        "accent": { "type": "string" },
+        "accent_secondary": { "type": "string" },
+        "card_bg": { "type": "string" },
+        "card_border": { "type": "string" }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "description": "Optional typography overrides",
+      "properties": {
+        "font_families": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "sound_design": {
+      "type": "object",
+      "properties": {
+        "audio_cues": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "mix_notes": { "type": "string" }
+      }
+    },
+    "music_recommendation": {
+      "type": "object",
+      "properties": {
+        "genre": { "type": "string" },
+        "tempo_bpm": { "type": "integer" },
+        "mood_description": { "type": "string" }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Explanation for the creative and visual choices"
+    },
+    "evidence": {
+      "type": "array",
+      "description": "Verified source URLs and retrieval timestamps",
+      "items": {
+        "type": "object",
+        "required": ["source_url", "retrieved_at", "note"],
+        "properties": {
+          "source_url": { "type": "string", "format": "uri" },
+          "retrieved_at": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "description": "Human review and approval tracking",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["approved", "pending_review", "draft", "rejected"]
+        },
+        "approved_by": { "type": "string" },
+        "approved_at": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

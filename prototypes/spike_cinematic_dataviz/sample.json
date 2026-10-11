@@ -1,0 +1,112 @@
+{
+  "title": "Spike: Cinematic Data Visualization Opening",
+  "profile": "cinematic_dataviz",
+  "creative_brief": {
+    "title": "Cinematic Data Visualization",
+    "topic": "Synthetic Data Quality & Telemetry Surveillance",
+    "base_profile": "cinematic_dataviz",
+    "visual_mood": "Atmospheric, deep-space midnight canvas with luminous neon cyan and electric coral highlights, generous breathing room, refined geometric typography, and floating data telemetry cards",
+    "pacing": "Deliberate, expansive macro-to-micro sequence (7.0s total: 2.2s macro pipeline hook -> 2.8s defect distribution anomaly -> 2.0s telemetry confirmation)",
+    "transitions": "Smooth atmospheric chapter transitions emphasizing visual continuity and data clarity",
+    "palette": {
+      "background": "#060913",
+      "card_bg": "#0c1322",
+      "accent": "#06b6d4",
+      "accent_secondary": "#f43f5e"
+    },
+    "typography": {
+      "font_families": ["Avenir", "Avenir Next", "Helvetica Neue", "Arial"]
+    },
+    "sound_design": {
+      "audio_cues": [
+        "[TEMP_SFX: cinematic_sub_boom.wav] Low 50Hz sub bass swell on opening scene",
+        "[TEMP_SFX: luminous_chime.wav] High harmonic digital shimmer when anomaly is isolated",
+        "[TEMP_SFX: warm_synth_pad.wav] Warm resonant chord resolving on downstream protection stat"
+      ],
+      "mix_notes": "Deep cinematic dynamic range with warm sub-bass rumble and sparkling high harmonic shimmer (temporary placeholder design)"
+    },
+    "music_recommendation": {
+      "genre": "Atmospheric ambient electronic / synth soundscape",
+      "tempo_bpm": 75,
+      "mood_description": "Immersive, contemplative, high-production cinematic tech score"
+    },
+    "rationale": "High-end cinematic aesthetics communicate platform elegance and production trust. Expansive whitespace allows complex distribution anomalies to register instantly on mobile screens.",
+    "evidence": [
+      {
+        "source_url": "https://greatexpectations.io/blog/data-quality-in-production/",
+        "retrieved_at": "2026-10-11T21:00:00Z",
+        "note": "Synthetic benchmark methodology for schema validation and negative constraint checking"
+      }
+    ],
+    "approval": {
+      "status": "approved",
+      "approved_by": "design_director",
+      "approved_at": "2026-10-11T21:18:00Z",
+      "notes": "Approved for Spike 3: Cinematic Data Visualization direction."
+    }
+  },
+  "output": {
+    "filename": "spike_cinematic_dataviz.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "macro_pipeline_hook",
+      "type": "title",
+      "duration": 2.2,
+      "headline": "Catching Defective Data at Ingestion",
+      "supporting_text": "A single corrupted record can silently poison downstream analytics.",
+      "tag": "SYNTHETIC PIPELINE BENCHMARK",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "defect_distribution",
+      "type": "data_chart",
+      "duration": 2.8,
+      "headline": "Latency Anomaly Quarantined",
+      "supporting_text": "Record #4092 (-84,200 ms) isolated before propagating downstream",
+      "tag": "DISTRIBUTION SURVEILLANCE",
+      "data_points": [
+        {
+          "label": "Record #4092 (Defective)",
+          "value": 84200,
+          "unit": "ms",
+          "formatted_value": "-84,200 ms",
+          "highlight": true,
+          "color": "#f43f5e",
+          "status": "QUARANTINED"
+        },
+        {
+          "label": "Baseline 99th Percentile",
+          "value": 120,
+          "unit": "ms",
+          "formatted_value": "120 ms",
+          "color": "#06b6d4",
+          "status": "VALID"
+        },
+        {
+          "label": "Ingestion Gate Latency",
+          "value": 12,
+          "unit": "ms",
+          "formatted_value": "< 12 ms",
+          "color": "#10b981",
+          "status": "PASS"
+        }
+      ],
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "downstream_protection",
+      "type": "stat_callout",
+      "duration": 2.0,
+      "headline": "Downstream Analytics Protected",
+      "stat_value": "42,000",
+      "stat_label": "Metric Calculations Preserved from Corruption",
+      "supporting_text": "1 quarantined invalid record prevented corrupting 42,000 downstream metric calculations with 0% leakage.",
+      "tag": "STREAM HEALTH: 100%",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    }
+  ]
+}

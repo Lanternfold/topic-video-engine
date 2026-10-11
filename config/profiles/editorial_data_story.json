@@ -1,0 +1,77 @@
+{
+  "id": "editorial_data_story",
+  "name": "Editorial Data Story",
+  "description": "Prestigious journalism aesthetic featuring warm paper backgrounds, serif typography, masthead rules, and high-impact dataviz (9:16 vertical)",
+  "colors": {
+    "background": "#fbf9f5",
+    "foreground": "#1c1917",
+    "secondary": "#57534e",
+    "muted": "#a8a29e",
+    "accent": "#b91c1c",
+    "accent_secondary": "#0369a1",
+    "card_bg": "#ffffff",
+    "card_border": "#e7e5e4",
+    "code_bg": "#f5f5f4",
+    "badge_bg": "#fef2f2",
+    "badge_text": "#b91c1c"
+  },
+  "typography": {
+    "font_families": [
+      "Georgia",
+      "Charter",
+      "Baskerville",
+      "Palatino",
+      "Times New Roman",
+      "DejaVu Serif"
+    ],
+    "sans_font_families": [
+      "Helvetica Neue",
+      "Helvetica",
+      "Arial",
+      "SF Pro Display",
+      "DejaVu Sans"
+    ],
+    "title_size": 60,
+    "headline_size": 44,
+    "subtitle_size": 25,
+    "body_size": 22,
+    "code_size": 20,
+    "metric_size": 86,
+    "caption_size": 18,
+    "badge_size": 16
+  },
+  "layout": {
+    "padding_x": 72,
+    "padding_y": 160,
+    "card_padding": 36,
+    "border_radius": 4,
+    "header_style": "editorial_rule",
+    "line_spacing": 12
+  },
+  "components": {
+    "terminal": {
+      "show_window_dots": false,
+      "window_title": "FIGURE // EXCERPT",
+      "prompt_symbol": "›",
+      "prompt_color": "#b91c1c",
+      "command_color": "#1c1917",
+      "output_color": "#57534e",
+      "success_color": "#0369a1"
+    },
+    "chart": {
+      "bar_color": "#b91c1c",
+      "bar_color_highlight": "#0369a1",
+      "bar_bg": "#e7e5e4",
+      "bar_height": 40,
+      "bar_radius": 2,
+      "grid_color": "#d6d3d1",
+      "label_color": "#1c1917",
+      "value_color": "#1c1917"
+    },
+    "stat": {
+      "number_color": "#b91c1c",
+      "label_color": "#1c1917",
+      "rule_color": "#b91c1c"
+    }
+  }
+}

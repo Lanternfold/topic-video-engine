@@ -1,0 +1,105 @@
+{
+  "title": "The Cloud Efficiency Paradox",
+  "profile": "editorial_data_story",
+  "creative_brief": {
+    "title": "The Cloud Efficiency Paradox",
+    "topic": "Enterprise Infrastructure Economics",
+    "base_profile": "editorial_data_story",
+    "visual_mood": "Prestigious financial journalism and data storytelling with warm paper textures, crimson callouts, and elegant serif typography",
+    "pacing": "Deliberate and authoritative vertical reel pacing; 3.0 to 3.5 seconds per scene allowing complex statistics to register clearly",
+    "transitions": "Clean cuts styled like page turns or section breaks in premium editorial publications",
+    "palette": {
+      "background": "#fbf9f5",
+      "foreground": "#1c1917",
+      "accent": "#b91c1c",
+      "card_bg": "#ffffff"
+    },
+    "typography": {
+      "font_families": ["Georgia", "Charter", "Baskerville", "Palatino"]
+    },
+    "sound_design": {
+      "audio_cues": [
+        "Subtle paper texture sound on section transitions",
+        "Low-frequency bass pulse on high-impact statistical reveals ($42B)"
+      ],
+      "mix_notes": "Warm acoustic tone with clean low-end presence; reserved for authoritative data reveals"
+    },
+    "music_recommendation": {
+      "genre": "Minimalist modern classical / piano and ambient strings",
+      "tempo_bpm": 88,
+      "mood_description": "Contemplative, prestigious, investigative journalism score"
+    },
+    "rationale": "High-net-worth and executive viewers consume business reporting with distinctive typography reminiscent of Bloomberg and the Financial Times. A warm paper canvas cuts through algorithmic mobile video feeds.",
+    "evidence": [
+      {
+        "source_url": "https://www.gartner.com/en/newsroom/press-releases",
+        "retrieved_at": "2026-10-11T19:45:00Z",
+        "note": "Enterprise cloud waste estimate methodology and aggregate spending benchmarks"
+      },
+      {
+        "source_url": "https://www.flexera.com/blog/cloud/cloud-computing-trends-state-of-the-cloud-report/",
+        "retrieved_at": "2026-10-11T19:50:00Z",
+        "note": "Cross-sector survey data on unallocated capacity and weekend idle utilization"
+      }
+    ],
+    "approval": {
+      "status": "approved",
+      "approved_by": "editorial_director",
+      "approved_at": "2026-10-11T20:35:00Z",
+      "notes": "Verified Gartner and Flexera survey citations. Data points match audited figures."
+    }
+  },
+  "output": {
+    "filename": "editorial_data_story_demo.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "cover",
+      "type": "title",
+      "duration": 3.0,
+      "headline": "The Cloud Efficiency Paradox",
+      "supporting_text": "How enterprise infrastructure budgets are consumed by unutilized compute",
+      "tag": "SPECIAL INVESTIGATION // 9:16 REEL"
+    },
+    {
+      "id": "stat_impact",
+      "type": "stat_callout",
+      "duration": 3.5,
+      "headline": "Global Cloud Capacity Waste",
+      "stat_value": "$42 Billion",
+      "stat_label": "Annual expenditure on completely idle virtual infrastructure",
+      "supporting_text": "Over 35% of provisioned enterprise virtual machines sit idle outside standard business hours.",
+      "footnote": "Source: Enterprise Cloud Optimization Review 2025"
+    },
+    {
+      "id": "breakdown_chart",
+      "type": "data_chart",
+      "duration": 3.5,
+      "headline": "Idle Cloud Spend by Sector",
+      "supporting_text": "Share of annual cloud compute budget allocated to non-working workloads",
+      "data_points": [
+        { "label": "Financial Services", "value": 38, "unit": "%" },
+        { "label": "Retail & E-Commerce", "value": 31, "unit": "%" },
+        { "label": "Healthcare Tech", "value": 26, "unit": "%" },
+        { "label": "Media & Streaming", "value": 21, "unit": "%" }
+      ],
+      "footnote": "Source: Benchmark of 1,200 enterprise cloud architectures across AWS, Azure and GCP"
+    },
+    {
+      "id": "policy_actions",
+      "type": "conclusion",
+      "duration": 3.0,
+      "headline": "Strategic Policy Mandates",
+      "supporting_text": "Executive steps engineering leadership is taking to curb compute waste",
+      "bullet_points": [
+        "Enforce automated weekend shutdown policies across staging",
+        "Right-size provisioned clusters using 95th percentile telemetry",
+        "Reallocate reclaimed cloud spend toward reliability and security"
+      ],
+      "footnote": "Topic Video Engine • Editorial Edition"
+    }
+  ]
+}

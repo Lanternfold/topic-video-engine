@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TopicVideoContentSpec",
+  "description": "Content specification schema example for Topic Video Engine (9:16 vertical Reels & Shorts)",
+  "type": "object",
+  "required": ["title", "profile", "scenes"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Video title"
+    },
+    "profile": {
+      "type": "string",
+      "description": "Art-direction base profile ID (e.g. 'developer_workflow', 'editorial_data_story')"
+    },
+    "creative_brief": {
+      "description": "Optional creative brief object or path to creative brief JSON file",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "filename": { "type": "string" },
+        "width": { "type": "integer", "default": 1080 },
+        "height": { "type": "integer", "default": 1920 },
+        "fps": { "type": "integer", "default": 30 }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "description": "Ordered list of scenes to render",
+      "items": {
+        "type": "object",
+        "required": ["type", "headline", "duration"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["title", "terminal_workflow", "data_chart", "stat_callout", "conclusion"]
+          },
+          "duration": {
+            "type": "number",
+            "description": "Scene duration in seconds (must be > 0)"
+          },
+          "headline": { "type": "string" },
+          "supporting_text": { "type": "string" },
+          "tag": { "type": "string" },
+          "footnote": { "type": "string" },
+          "terminal": {
+            "type": "object",
+            "properties": {
+              "command": { "type": "string" },
+              "output": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "data_points": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["label", "value"],
+              "properties": {
+                "label": { "type": "string" },
+                "value": { "type": "number" },
+                "unit": { "type": "string" }
+              }
+            }
+          },
+          "stat_value": { "type": "string" },
+          "stat_label": { "type": "string" },
+          "bullet_points": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

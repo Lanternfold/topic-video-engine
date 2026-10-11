@@ -1,0 +1,77 @@
+{
+  "id": "kinetic_editorial",
+  "name": "Kinetic Editorial Investigation",
+  "description": "High-velocity investigative journalism with stark editorial typography, bold publication rules, dramatic typographic hierarchy, and rapid visual pacing (9:16 vertical)",
+  "colors": {
+    "background": "#f6f4ee",
+    "foreground": "#0f172a",
+    "secondary": "#475569",
+    "muted": "#94a3b8",
+    "accent": "#dc2626",
+    "accent_secondary": "#0284c7",
+    "card_bg": "#ffffff",
+    "card_border": "#cbd5e1",
+    "code_bg": "#edebe4",
+    "badge_bg": "#fef2f2",
+    "badge_text": "#dc2626"
+  },
+  "typography": {
+    "font_families": [
+      "Georgia",
+      "Charter",
+      "Baskerville",
+      "Palatino",
+      "Times New Roman"
+    ],
+    "sans_font_families": [
+      "Helvetica Neue",
+      "Arial",
+      "Futura",
+      "Helvetica"
+    ],
+    "title_size": 64,
+    "headline_size": 46,
+    "subtitle_size": 26,
+    "body_size": 22,
+    "code_size": 20,
+    "metric_size": 96,
+    "caption_size": 18,
+    "badge_size": 16
+  },
+  "layout": {
+    "padding_x": 72,
+    "padding_y": 140,
+    "card_padding": 36,
+    "border_radius": 0,
+    "header_style": "editorial_rule",
+    "line_spacing": 12
+  },
+  "components": {
+    "terminal": {
+      "show_window_dots": false,
+      "window_title": "EXHIBIT A // AUDITED STREAM RECORD",
+      "prompt_symbol": "›",
+      "prompt_color": "#dc2626",
+      "command_color": "#0f172a",
+      "output_color": "#475569",
+      "success_color": "#0284c7",
+      "error_color": "#dc2626",
+      "status_line": "INGESTION GATE REPORT • DEFECTIVE RECORD QUARANTINED BEFORE PROPAGATION"
+    },
+    "chart": {
+      "bar_color": "#dc2626",
+      "bar_color_highlight": "#0284c7",
+      "bar_bg": "#e2e8f0",
+      "bar_height": 42,
+      "bar_radius": 0,
+      "grid_color": "#cbd5e1",
+      "label_color": "#0f172a",
+      "value_color": "#0f172a"
+    },
+    "stat": {
+      "number_color": "#dc2626",
+      "label_color": "#0f172a",
+      "rule_color": "#dc2626"
+    }
+  }
+}

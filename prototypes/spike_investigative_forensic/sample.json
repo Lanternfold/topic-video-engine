@@ -1,0 +1,99 @@
+{
+  "title": "Spike: Investigative Forensic Opening",
+  "profile": "investigative_forensic",
+  "creative_brief": {
+    "title": "Investigative Forensic Dossier",
+    "topic": "Synthetic Telemetry & Ingestion Gate Forensics",
+    "base_profile": "investigative_forensic",
+    "visual_mood": "Cold, clinical incident investigation dossier with monospaced telemetry logs, diagnostic corner brackets, hairline radar dividers, and sharp red alert quarantine highlights",
+    "pacing": "Deliberate, tense forensic cadence (6.5s total: 2.0s hook -> 2.5s defect packet inspection -> 2.0s containment verdict)",
+    "transitions": "Hard clinical cuts simulating high-precision telemetry frame scanner updates",
+    "palette": {
+      "background": "#0a0d14",
+      "card_bg": "#0f172a",
+      "accent": "#38bdf8",
+      "accent_secondary": "#f87171"
+    },
+    "typography": {
+      "font_families": ["Menlo", "SF Pro Mono", "Monaco", "Courier New", "Consolas"]
+    },
+    "personal_signature": {
+      "style": "Understated engineering deadpan",
+      "element": "Observation that negative session duration is a causality violation ('session ended before it started')",
+      "prominence": "Subtle, embedded naturally in diagnostic validation log"
+    },
+    "sound_design": {
+      "audio_cues": [
+        "[TEMP_SFX: forensic_radar_ping.wav] Cold low-resonance electronic sonar ping on dossier open",
+        "[TEMP_SFX: tactile_key_shutter.wav] Sharp mechanical keystroke shutter when defect is flagged [QUARANTINED]",
+        "[TEMP_SFX: telemetry_lock.wav] Sub-bass tone on containment confirmation"
+      ],
+      "mix_notes": "Dry, clinical frequency mix with prominent high-frequency digital clicks and sub-bass impact (temporary sound placeholder design)"
+    },
+    "music_recommendation": {
+      "genre": "Minimal dark ambient electronic drone",
+      "tempo_bpm": 88,
+      "mood_description": "Tense, investigative, clinical electronic atmosphere with subdued rhythmic pulse"
+    },
+    "rationale": "Forensic styling treats data quality as an auditable operational incident. Monospace typography and diagnostic bracket framing immediately signal forensic rigor on mobile feeds.",
+    "evidence": [
+      {
+        "source_url": "https://greatexpectations.io/blog/data-quality-in-production/",
+        "retrieved_at": "2026-10-11T21:00:00Z",
+        "note": "Synthetic benchmark methodology for schema validation and negative constraint checking"
+      }
+    ],
+    "approval": {
+      "status": "approved",
+      "approved_by": "creative_lead",
+      "approved_at": "2026-10-11T21:15:00Z",
+      "notes": "Approved with subtle engineering deadpan signature."
+    }
+  },
+  "output": {
+    "filename": "spike_investigative_forensic.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "intro_audit",
+      "type": "title",
+      "duration": 2.0,
+      "headline": "Catching Defective Data at Ingestion",
+      "supporting_text": "A single corrupted record can silently poison downstream analytics.",
+      "tag": "SYNTHETIC BENCHMARK // AUDIT DOSSIER",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "defect_isolation",
+      "type": "terminal_workflow",
+      "duration": 2.5,
+      "headline": "Defective Record Caught at Ingestion Gate",
+      "supporting_text": "Record #4092 rejected: duration_ms = -84,200 violates non-negative constraint",
+      "tag": "INCIDENT ISOLATION // INGEST_GATE",
+      "terminal": {
+        "command": "stream-validator --stream=synthetic-feed --record=4092 --inspect",
+        "output": [
+          "[RECORD_4092] payload = { session_id: 'syn-8492', duration_ms: -84200 }",
+          "[ALERT] VIOLATION: duration_ms = -84,200ms (session ended before it started)",
+          "[QUARANTINED] Isolated in < 12ms before downstream propagation (0 leaked)"
+        ],
+        "status_line": "GATE://STREAM-01 • SCAN_ID: #4092 • ROOT_CAUSE: CLOCK_SKEW • LEAK: 0%"
+      },
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "telemetry_verdict",
+      "type": "stat_callout",
+      "duration": 2.0,
+      "headline": "Downstream Corruption Prevented",
+      "stat_value": "42,000",
+      "stat_label": "Downstream Metric Calculations Protected",
+      "supporting_text": "1 quarantined invalid record prevented corrupting 42,000 downstream metric calculations with < 12 ms validation latency.",
+      "tag": "CONTAINMENT VERDICT // AUDIT",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    }
+  ]
+}

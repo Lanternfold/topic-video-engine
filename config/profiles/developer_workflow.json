@@ -1,0 +1,69 @@
+{
+  "id": "developer_workflow",
+  "name": "Developer Workflow",
+  "description": "Terminal and IDE-inspired visual identity tailored for developer tooling and engineering workflows (9:16 vertical)",
+  "colors": {
+    "background": "#0d1117",
+    "foreground": "#e6edf3",
+    "secondary": "#8b949e",
+    "muted": "#484f58",
+    "accent": "#38bdf8",
+    "accent_secondary": "#34d399",
+    "card_bg": "#161b22",
+    "card_border": "#30363d",
+    "code_bg": "#0b0f14",
+    "badge_bg": "#1f2937",
+    "badge_text": "#38bdf8"
+  },
+  "typography": {
+    "font_families": [
+      "Menlo",
+      "SF Pro Mono",
+      "Monaco",
+      "Consolas",
+      "Courier New",
+      "DejaVu Sans Mono"
+    ],
+    "title_size": 52,
+    "headline_size": 40,
+    "subtitle_size": 24,
+    "body_size": 22,
+    "code_size": 20,
+    "metric_size": 76,
+    "caption_size": 18,
+    "badge_size": 15
+  },
+  "layout": {
+    "padding_x": 72,
+    "padding_y": 160,
+    "card_padding": 36,
+    "border_radius": 12,
+    "header_style": "terminal_dots",
+    "line_spacing": 10
+  },
+  "components": {
+    "terminal": {
+      "show_window_dots": true,
+      "window_title": "engine@workflow ~ zsh",
+      "prompt_symbol": "$",
+      "prompt_color": "#38bdf8",
+      "command_color": "#f0f6fc",
+      "output_color": "#8b949e",
+      "success_color": "#34d399"
+    },
+    "chart": {
+      "bar_color": "#38bdf8",
+      "bar_color_highlight": "#34d399",
+      "bar_bg": "#21262d",
+      "bar_height": 42,
+      "bar_radius": 6,
+      "grid_color": "#21262d",
+      "label_color": "#e6edf3",
+      "value_color": "#38bdf8"
+    },
+    "stat": {
+      "number_color": "#38bdf8",
+      "label_color": "#8b949e"
+    }
+  }
+}

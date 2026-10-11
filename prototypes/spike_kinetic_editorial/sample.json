@@ -1,0 +1,117 @@
+{
+  "title": "Spike: Kinetic Editorial Opening",
+  "profile": "kinetic_editorial",
+  "creative_brief": {
+    "title": "Kinetic Editorial Investigation",
+    "topic": "Synthetic Data Quality & Editorial Pipeline Investigation",
+    "base_profile": "kinetic_editorial",
+    "visual_mood": "High-velocity investigative journalism with stark editorial typography, bold publication rules, dramatic typographic hierarchy, unrounded newsprint framing, and rapid visual pacing",
+    "pacing": "Fast, syncopated 4-scene cadence (6.0s total: 1.4s hook -> 1.6s defect callout -> 1.6s impact chart -> 1.4s editorial takeaway)",
+    "transitions": "Rapid publication whip cuts creating a snappy investigative news flash rhythm",
+    "palette": {
+      "background": "#f6f4ee",
+      "foreground": "#0f172a",
+      "accent": "#dc2626",
+      "accent_secondary": "#0284c7"
+    },
+    "typography": {
+      "font_families": ["Georgia", "Charter", "Baskerville", "Palatino"]
+    },
+    "sound_design": {
+      "audio_cues": [
+        "[TEMP_SFX: paper_whip_snap.wav] Fast newsprint page snap on opening hook",
+        "[TEMP_SFX: orchestral_hit.wav] Authoritative low-mid pulse on -84,200 ms defect reveal",
+        "[TEMP_SFX: camera_shutter.wav] Clean transient click on takeaway verdict"
+      ],
+      "mix_notes": "Punchy acoustic transients with warm bass impact on key statistics (temporary scratch audio placeholders)"
+    },
+    "music_recommendation": {
+      "genre": "Propulsive muted acoustic percussion / minimal upright bass",
+      "tempo_bpm": 120,
+      "mood_description": "Urgent, driving, investigative journalism rhythm maintaining high retention"
+    },
+    "rationale": "Editorial storytelling cuts through mobile social feeds with prestigious publication authority. Fast cuts and high contrast retain attention while conveying the concrete data defect.",
+    "evidence": [
+      {
+        "source_url": "https://greatexpectations.io/blog/data-quality-in-production/",
+        "retrieved_at": "2026-10-11T21:00:00Z",
+        "note": "Synthetic benchmark methodology for schema validation and negative constraint checking"
+      }
+    ],
+    "approval": {
+      "status": "approved",
+      "approved_by": "editorial_lead",
+      "approved_at": "2026-10-11T21:16:00Z",
+      "notes": "Approved for Spike 2: Kinetic Editorial direction."
+    }
+  },
+  "output": {
+    "filename": "spike_kinetic_editorial.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "hook_breaking",
+      "type": "title",
+      "duration": 1.4,
+      "headline": "Catching Defective Data at Ingestion",
+      "supporting_text": "A single corrupted record can silently poison downstream analytics.",
+      "tag": "SYNTHETIC PIPELINE BENCHMARK // INVESTIGATION",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "defect_callout",
+      "type": "stat_callout",
+      "duration": 1.6,
+      "headline": "The Concrete Data Defect",
+      "stat_value": "-84,200 ms",
+      "stat_label": "Impossible Negative Duration in Record #4092",
+      "supporting_text": "Rule: duration_ms >= 0 failed. Quarantined at ingestion gate before reaching analytics tables.",
+      "tag": "CORRUPTED RECORD ISOLATED",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "impact_chart",
+      "type": "data_chart",
+      "duration": 1.6,
+      "headline": "Downstream Containment Audit",
+      "supporting_text": "1 quarantined record prevented corrupting 42,000 downstream calculations",
+      "tag": "DOWNSTREAM IMPACT",
+      "data_points": [
+        {
+          "label": "Calculations Protected",
+          "value": 42000,
+          "unit": "",
+          "formatted_value": "42,000",
+          "highlight": true,
+          "color": "#0284c7",
+          "status": "SAVED"
+        },
+        {
+          "label": "Corrupted Records Leaked",
+          "value": 0,
+          "unit": "",
+          "formatted_value": "0",
+          "color": "#dc2626",
+          "status": "BLOCKED"
+        }
+      ],
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    },
+    {
+      "id": "verdict_takeaway",
+      "type": "conclusion",
+      "duration": 1.4,
+      "headline": "Core Investigation Takeaway",
+      "supporting_text": "Catching bad data at ingestion preserves downstream analytical truth.",
+      "bullet_points": [
+        "Record #4092 (-84,200 ms) quarantined in < 12 ms",
+        "42,000 downstream metric calculations protected with 0% leakage"
+      ],
+      "tag": "EDITORIAL VERDICT",
+      "footnote": "Synthetic pipeline benchmark • 100,000 records evaluated • No production data used"
+    }
+  ]
+}

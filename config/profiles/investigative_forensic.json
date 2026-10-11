@@ -1,0 +1,71 @@
+{
+  "id": "investigative_forensic",
+  "name": "Investigative Forensic Dossier",
+  "description": "Cold, high-density telemetry inspection and incident forensics with monospaced typography, diagnostic corner brackets, and stark alert indicators (9:16 vertical)",
+  "colors": {
+    "background": "#0a0d14",
+    "foreground": "#e2e8f0",
+    "secondary": "#94a3b8",
+    "muted": "#475569",
+    "accent": "#38bdf8",
+    "accent_secondary": "#f87171",
+    "card_bg": "#0f172a",
+    "card_border": "#1e293b",
+    "code_bg": "#070b12",
+    "badge_bg": "#3b1111",
+    "badge_text": "#f87171"
+  },
+  "typography": {
+    "font_families": [
+      "Menlo",
+      "SF Pro Mono",
+      "Monaco",
+      "Courier New",
+      "Consolas"
+    ],
+    "title_size": 50,
+    "headline_size": 38,
+    "subtitle_size": 22,
+    "body_size": 20,
+    "code_size": 20,
+    "metric_size": 76,
+    "caption_size": 17,
+    "badge_size": 15
+  },
+  "layout": {
+    "padding_x": 64,
+    "padding_y": 140,
+    "card_padding": 32,
+    "border_radius": 2,
+    "header_style": "forensic_bracket",
+    "line_spacing": 10
+  },
+  "components": {
+    "terminal": {
+      "show_window_dots": false,
+      "window_title": "TELEMETRY_LOG // STREAM_04_GATE",
+      "prompt_symbol": ">",
+      "prompt_color": "#38bdf8",
+      "command_color": "#f8fafc",
+      "output_color": "#94a3b8",
+      "success_color": "#34d399",
+      "error_color": "#f87171",
+      "status_line": "GATE://STREAM-01 • SCAN_ID: #4092 • DEFECT: ISOLATED • LEAK: 0%"
+    },
+    "chart": {
+      "bar_color": "#1e293b",
+      "bar_color_highlight": "#f87171",
+      "bar_bg": "#0f172a",
+      "bar_height": 40,
+      "bar_radius": 2,
+      "grid_color": "#1e293b",
+      "label_color": "#e2e8f0",
+      "value_color": "#38bdf8"
+    },
+    "stat": {
+      "number_color": "#f87171",
+      "label_color": "#e2e8f0",
+      "rule_color": "#f87171"
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "title": "Optimizing CI/CD Build Pipelines",
+  "profile": "developer_workflow",
+  "creative_brief": {
+    "title": "Parallel Test Sharding in CI",
+    "topic": "Developer Productivity & Tooling",
+    "base_profile": "developer_workflow",
+    "visual_mood": "High-contrast developer IDE console with cyan status accents, dark slate terminal framing, and snappy engineering aesthetics",
+    "pacing": "Fast-paced vertical reel cadence; 3.0 to 3.5 seconds per scene to sustain technical viewer retention",
+    "transitions": "Clean hard cuts simulating quick IDE tab switches and terminal command executions",
+    "palette": {
+      "accent": "#38bdf8",
+      "accent_secondary": "#34d399",
+      "card_bg": "#161b22",
+      "code_bg": "#0b0f14"
+    },
+    "typography": {
+      "font_families": ["Menlo", "SF Pro Mono", "Monaco", "Consolas"]
+    },
+    "sound_design": {
+      "audio_cues": [
+        "Mechanical keyboard stroke on command prompt display",
+        "Subtle electronic chime on test suite pass status (✓)"
+      ],
+      "mix_notes": "Clean high-mid frequency transients; duck background bed under technical callouts"
+    },
+    "music_recommendation": {
+      "genre": "Lo-fi instrumental synthwave / tech beat",
+      "tempo_bpm": 115,
+      "mood_description": "Focused, propulsive electronic rhythm without vocal distraction"
+    },
+    "rationale": "Developer audiences on Reels and Shorts respond to realistic CLI output and hard telemetry rather than generic stock footage. Dark-mode terminals provide high contrast on mobile screens.",
+    "evidence": [
+      {
+        "source_url": "https://pytest-split.readthedocs.io/en/latest/",
+        "retrieved_at": "2026-10-11T20:10:00Z",
+        "note": "Documentation reference for --splits and timing durations cache"
+      },
+      {
+        "source_url": "https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs",
+        "retrieved_at": "2026-10-11T20:12:00Z",
+        "note": "Matrix job execution pattern for parallel GitHub Actions runners"
+      }
+    ],
+    "approval": {
+      "status": "approved",
+      "approved_by": "engineering_lead",
+      "approved_at": "2026-10-11T20:30:00Z",
+      "notes": "Verified terminal flags and runner telemetry against local pytest-split benchmark runs."
+    }
+  },
+  "output": {
+    "filename": "developer_workflow_demo.mp4",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "scenes": [
+    {
+      "id": "intro",
+      "type": "title",
+      "duration": 3.0,
+      "headline": "Parallel Test Sharding in CI",
+      "supporting_text": "Slashing feedback loops from minutes to seconds with pytest-split",
+      "tag": "DEV WORKFLOW // 9:16 REEL"
+    },
+    {
+      "id": "terminal_step",
+      "type": "terminal_workflow",
+      "duration": 3.5,
+      "headline": "Step 1: Partitioning Test Suites",
+      "supporting_text": "Distribute execution across 4 parallel runner nodes",
+      "terminal": {
+        "command": "pytest --splits 4 --group 1 --store-durations",
+        "output": [
+          "[pytest] 218 test items assigned to runner-01",
+          "[runner-01] cached durations loaded from .test_durations",
+          "✓ runner-01 passed in 14.2s (0 failures, 218 passed)"
+        ]
+      }
+    },
+    {
+      "id": "benchmark_chart",
+      "type": "data_chart",
+      "duration": 3.5,
+      "headline": "Execution Duration Comparison",
+      "supporting_text": "Total CI pipeline execution time in seconds (lower is better)",
+      "data_points": [
+        { "label": "Sequential Baseline", "value": 58, "unit": "s" },
+        { "label": "2x Parallel Runners", "value": 31, "unit": "s" },
+        { "label": "4x Sharded Runners", "value": 14, "unit": "s" }
+      ],
+      "footnote": "Benchmarks averaged across 50 runs on 8-core GitHub Actions runners"
+    },
+    {
+      "id": "takeaways",
+      "type": "conclusion",
+      "duration": 3.0,
+      "headline": "Key Takeaways",
+      "supporting_text": "Best practices for implementing parallel test sharding",
+      "bullet_points": [
+        "Store timing artifacts between workflow executions",
+        "Shard by execution time, not raw test count",
+        "Enforce fail-fast on critical unit test partitions"
+      ]
+    }
+  ]
+}
