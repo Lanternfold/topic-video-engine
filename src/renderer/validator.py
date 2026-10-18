@@ -265,19 +265,29 @@ def audit_creative_direction(
     spec_data: Dict[str, Any],
     brief_data: Optional[Dict[str, Any]] = None,
     profile_data: Optional[Dict[str, Any]] = None,
+    require_approval: bool = True,
 ) -> Dict[str, Any]:
-    """Evaluate creative quality, UX/psychology principles, and mobile constraints.
+    """Validate a spec and audit readability, safe areas, and creative direction.
 
-    Provides non-blocking warnings and recommendations for human review.
+    Structural validation failures are reported separately from review warnings.
+    The audit never reports a pass when the underlying spec is invalid.
     """
     warnings: List[str] = []
     info: Dict[str, Any] = {}
-
     brief = brief_data or spec_data.get("creative_brief") or {}
     profile = profile_data or {}
+
+    # Validate the same brief that will be audited, including a CLI override.
+    audit_spec = dict(spec_data)
+    if brief:
+        audit_spec["creative_brief"] = brief
+    validation_errors = validate_spec(audit_spec, require_approval=require_approval)
+    info["validation_errors"] = validation_errors
+
     colors = profile.get("colors", {})
-    if brief.get("palette"):
-        colors = {**colors, **brief.get("palette", {})}
+    palette = brief.get("palette", {})
+    if isinstance(palette, dict):
+        colors = {**colors, **palette}
 
     # 1. Contrast & Readability Check
     bg = colors.get("background", "#ffffff")
@@ -289,27 +299,43 @@ def audit_creative_direction(
             f"Foreground contrast ratio ({contrast}:1) is below WCAG AA recommended 4.5:1 for mobile body text."
         )
 
-    # 2. Safe Area Clearance Check
+    # 2. Safe-area check uses the same precedence and effective padding as BaseScene.
     layout = profile.get("layout", {})
-    pad_y = layout.get("padding_y", 120)
-    pad_x = layout.get("padding_x", 72)
-    info["pad_x"] = pad_x
-    info["pad_y"] = pad_y
-    if pad_y < 120:
+    safe_area = (
+        brief.get("mobile_safe_area")
+        or layout.get("mobile_safe_area")
+        or profile.get("_creative_brief", {}).get("mobile_safe_area")
+        or {}
+    )
+    safe_top = safe_area.get("top", 120)
+    safe_bottom = safe_area.get("bottom", 160)
+    safe_sides = safe_area.get("sides", 72)
+    pad_top = max(layout.get("padding_y", 80), safe_top)
+    pad_sides = max(layout.get("padding_x", 120), safe_sides)
+    info["safe_area"] = {
+        "top": safe_top, "bottom": safe_bottom, "sides": safe_sides,
+        "effective_top_padding": pad_top, "effective_side_padding": pad_sides,
+    }
+    if pad_top < 120:
         warnings.append(
-            f"Top/bottom padding ({pad_y}px) is under 120px; platform UI overlays (Reels/Shorts) may obscure content."
+            f"Effective top padding ({pad_top}px) is under 120px; platform UI may obscure content."
         )
-    if pad_x < 60:
+    if safe_bottom < 160:
         warnings.append(
-            f"Side padding ({pad_x}px) is under 60px; right-hand engagement buttons may overlap copy."
+            f"Bottom safe area ({safe_bottom}px) is under 160px; platform UI may obscure footnotes or lower content."
         )
+    if pad_sides < 60:
+        warnings.append(
+            f"Effective side padding ({pad_sides}px) is under 60px; engagement controls may overlap copy."
+        )
+    if safe_bottom < 0 or safe_bottom >= int(spec_data.get("output", {}).get("height", 1920)):
+        warnings.append("Bottom safe area is outside the usable frame; check mobile_safe_area.bottom.")
 
     # 3. Singular Focal Point Check
     scenes = spec_data.get("scenes", [])
     scenes_without_focal = [
-        s.get("id", f"scene_{i}")
-        for i, s in enumerate(scenes)
-        if not s.get("focal_point")
+        s.get("id", f"scene_{i}") for i, s in enumerate(scenes)
+        if isinstance(s, dict) and not s.get("focal_point")
     ]
     brief_focal_points = brief.get("scene_focal_points", [])
     if scenes_without_focal and not brief_focal_points:
@@ -320,32 +346,37 @@ def audit_creative_direction(
         )
 
     # 4. Narrative Arc & Pacing
-    total_duration = sum(s.get("duration", 0.0) for s in scenes)
+    total_duration = sum(
+        s.get("duration", 0.0) for s in scenes if isinstance(s, dict)
+        and isinstance(s.get("duration", 0.0), (int, float))
+    )
     info["total_duration"] = total_duration
-    info["scene_count"] = len(scenes)
+    info["scene_count"] = len(scenes) if isinstance(scenes, list) else 0
     if total_duration < 10.0:
         warnings.append("Total duration is under 10s; story arc may lack sufficient context or development.")
     elif total_duration > 65.0:
-        warnings.append("Total duration exceeds 65s; retention on Reels/Shorts typically peaks under 60s.")
+        warnings.append("Total duration exceeds 65s; review whether the story needs this length.")
 
-    # 5. Evidence & Traceability Check
+    # 5. Evidence & Traceability Check. Malformed evidence is caught by validation above.
     evidence_list = brief.get("evidence", [])
-    unverified = [
-        item.get("source_url", "unknown")
-        for item in evidence_list
-        if item.get("verification_status") in ("unverified", "contested")
-    ]
-    if unverified:
-        info["unverified_evidence"] = unverified
-        warnings.append(f"{len(unverified)} source citation(s) are unverified or contested.")
+    if isinstance(evidence_list, list):
+        unverified = [
+            item.get("source_url", "unknown") for item in evidence_list
+            if isinstance(item, dict)
+            and item.get("verification_status") in ("unverified", "contested")
+        ]
+        if unverified:
+            info["unverified_evidence"] = unverified
+            warnings.append(f"{len(unverified)} source citation(s) are unverified or contested.")
 
     # 6. Personal Signature Presence
     sig = brief.get("personal_signature") or {}
-    has_scene_sig = any("personal_signature" in s for s in scenes)
-    info["personal_signature_configured"] = bool(sig.get("enabled") or has_scene_sig)
+    has_scene_sig = any(isinstance(s, dict) and "personal_signature" in s for s in scenes)
+    info["personal_signature_configured"] = bool(isinstance(sig, dict) and sig.get("enabled") or has_scene_sig)
 
     return {
-        "passed": len(warnings) == 0,
+        "passed": not validation_errors and not warnings,
+        "errors": validation_errors,
         "warnings": warnings,
         "info": info,
     }
