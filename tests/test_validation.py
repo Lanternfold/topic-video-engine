@@ -232,6 +232,9 @@ class TestValidation(unittest.TestCase):
         }
         brief = {
             "visual_mood": "High energy",
+            "pacing": "Measured",
+            "transitions": "Hard cuts",
+            "rationale": "Audit test fixture",
             "palette": {"background": "#F6F0E6", "foreground": "#171820"},
             "approval": {"status": "approved"}
         }
@@ -243,13 +246,41 @@ class TestValidation(unittest.TestCase):
         self.assertTrue(res["passed"])
         self.assertEqual(res["warnings"], [])
 
-        # Low contrast warning
+        # Low contrast warning, with a structurally valid brief.
         low_contrast_brief = {
-            "palette": {"background": "#e0e0e0", "foreground": "#ffffff"}
+            "visual_mood": "Test",
+            "pacing": "Measured",
+            "transitions": "Hard cuts",
+            "rationale": "Low contrast test",
+            "palette": {"background": "#e0e0e0", "foreground": "#ffffff"},
+            "approval": {"status": "approved"},
         }
         res_warn = audit_creative_direction(spec, low_contrast_brief, profile)
         self.assertFalse(res_warn["passed"])
         self.assertTrue(any("contrast ratio" in w for w in res_warn["warnings"]))
+
+    def test_audit_fails_on_invalid_spec_and_reports_bottom_safe_area(self):
+        from src.renderer.validator import audit_creative_direction
+        invalid = {
+            "title": "Invalid audit",
+            "profile": "kinetic_editorial",
+            "creative_brief": {
+                "visual_mood": "Test",
+                "pacing": "Measured",
+                "transitions": "Cuts",
+                "rationale": "Test",
+                "approval": {"status": "approved"},
+                "mobile_safe_area": {"top": 140, "bottom": 40, "sides": 72},
+            },
+            "scenes": [{"type": "unknown_scene", "duration": -1, "headline": ""}],
+        }
+        profile = {"colors": {"background": "#000000", "foreground": "#ffffff"},
+                   "layout": {"padding_x": 72, "padding_y": 140}}
+        result = audit_creative_direction(invalid, None, profile)
+        self.assertFalse(result["passed"])
+        self.assertTrue(result["errors"])
+        self.assertTrue(any("Bottom safe area" in w for w in result["warnings"]))
+        self.assertIn("validation_errors", result["info"])
 
 
 if __name__ == "__main__":

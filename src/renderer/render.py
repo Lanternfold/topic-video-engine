@@ -292,15 +292,24 @@ def main():
                 brief_data = load_creative_brief(args.brief)
             elif "creative_brief" in spec_data:
                 brief_data = load_creative_brief(spec_data["creative_brief"], base_dir=args.spec.parent)
-            res = audit_creative_direction(spec_data, brief_data, prof_data)
+
+            res = audit_creative_direction(
+                spec_data,
+                brief_data,
+                prof_data,
+                require_approval=not args.allow_unapproved,
+            )
             print("=== Creative Direction Audit ===")
-            print(f"Status: {'PASSED' if res['passed'] else 'ATTENTION RECOMMENDED'}")
-            if res["warnings"]:
-                for w in res["warnings"]:
-                    print(f"  ⚠ {w}")
-            else:
-                print("  ✓ All UX, readability, focal point, and contrast checks passed.")
+            print(f"Status: {'PASSED' if res['passed'] else 'FAILED / REVIEW REQUIRED'}")
+            for error in res.get("errors", []):
+                print(f"  ✗ Validation error: {error}")
+            for warning in res["warnings"]:
+                print(f"  ⚠ {warning}")
+            if res["passed"]:
+                print("  ✓ Structural validation and creative checks passed.")
             print(f"Info: {res['info']}")
+            if res.get("errors"):
+                sys.exit(1)
             return
 
         if args.contact_sheet:
