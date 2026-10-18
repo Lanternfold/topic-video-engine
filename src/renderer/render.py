@@ -15,14 +15,18 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from PIL import Image, ImageDraw
+
 from src.renderer.ffmpeg_writer import FFmpegWriter
 from src.renderer.validator import (
     ValidationError,
+    audit_creative_direction,
     load_creative_brief,
     load_profile,
     merge_creative_direction,
     validate_spec,
 )
+from src.scenes.fonts import get_font
 from src.scenes.registry import get_scene_renderer
 
 
@@ -105,6 +109,13 @@ def render_video(
         print(f"[Engine] Format: {width}x{height} (9:16) @ {fps}fps, ~{total_duration:.1f}s")
         print(f"[Engine] Scenes: {len(scenes)}, expected frames: {total_expected_frames}")
 
+    # Creative quality pre-flight audit
+    audit_res = audit_creative_direction(spec_data, brief_data, profile_data)
+    if verbose and audit_res["warnings"]:
+        print("[Creative Audit] Pre-flight recommendations:")
+        for w in audit_res["warnings"]:
+            print(f"  ⚠ {w}")
+
     start_time = time.time()
 
     with FFmpegWriter(output_path, width=width, height=height, fps=fps) as writer:
@@ -132,6 +143,115 @@ def render_video(
     return output_path
 
 
+def generate_contact_sheet(
+    spec_path: Path,
+    output_path: Optional[Path] = None,
+    profiles_dir: Optional[Path] = None,
+    brief_override: Optional[Path] = None,
+    thumb_width: int = 360,
+    thumb_height: int = 640,
+) -> Path:
+    """Generate a high-resolution contact sheet image showing hero frames of all scenes.
+
+    Enables rapid creative review of narrative progression, visual hierarchy, mobile safe areas,
+    and palette harmony.
+    """
+    spec_path = Path(spec_path)
+    if not spec_path.is_file():
+        raise FileNotFoundError(f"Content specification file not found: {spec_path}")
+
+    with open(spec_path, "r", encoding="utf-8") as f:
+        spec_data = json.load(f)
+
+    profile_id = spec_data["profile"]
+    base_profile_data = load_profile(profile_id, profiles_dir=profiles_dir)
+
+    brief_data = None
+    if brief_override:
+        brief_data = load_creative_brief(brief_override)
+    elif "creative_brief" in spec_data:
+        brief_data = load_creative_brief(spec_data["creative_brief"], base_dir=spec_path.parent)
+
+    profile_data = merge_creative_direction(base_profile_data, brief_data)
+
+    output_cfg = spec_data.get("output", {})
+    w = int(output_cfg.get("width", 1080))
+    h = int(output_cfg.get("height", 1920))
+    scenes = spec_data.get("scenes", [])
+    if not scenes:
+        raise ValidationError("Spec contains no scenes to generate contact sheet")
+
+    # Render each scene hero frame
+    rendered_frames = []
+    for idx, scene in enumerate(scenes):
+        scene_type = scene.get("type", "unknown")
+        renderer = get_scene_renderer(scene_type, profile=profile_data, width=w, height=h)
+        frame_img = renderer.render(scene)
+        thumb = frame_img.resize((thumb_width, thumb_height), Image.Resampling.LANCZOS)
+        rendered_frames.append((scene, thumb))
+
+    num_scenes = len(rendered_frames)
+    cols = min(num_scenes, 4)
+    rows = (num_scenes + cols - 1) // cols
+
+    card_margin_x = 24
+    card_margin_y = 24
+    info_h = 100
+    top_header_h = 140
+
+    sheet_w = cols * thumb_width + (cols + 1) * card_margin_x
+    sheet_h = top_header_h + rows * (thumb_height + info_h + card_margin_y) + card_margin_y
+
+    sheet = Image.new("RGB", (sheet_w, sheet_h), (20, 24, 30))
+    draw = ImageDraw.Draw(sheet)
+
+    font_head = get_font(["Helvetica Neue", "Arial", "sans-serif"], 32)
+    font_sub = get_font(["Helvetica Neue", "Arial", "sans-serif"], 20)
+    font_meta = get_font(["Menlo", "Courier"], 16)
+
+    title_str = spec_data.get("title", "Topic Video")
+    mood_str = brief_data.get("visual_mood") if brief_data else base_profile_data.get("name", profile_id)
+    total_dur = sum(s.get("duration", 0.0) for s in scenes)
+    draw.text((card_margin_x, 28), f"CREATIVE CONTACT SHEET // {title_str}", fill=(240, 246, 252), font=font_head)
+    draw.text((card_margin_x, 72), f"Profile: {profile_id} • Mood: {mood_str}", fill=(139, 148, 158), font=font_sub)
+    draw.text((card_margin_x, 102), f"Scenes: {num_scenes} • Total Duration: {total_dur:.1f}s • Target: 9:16 Vertical (1080x1920 @ 30fps)", fill=(56, 189, 248), font=font_meta)
+
+    draw.line([(card_margin_x, top_header_h - 15), (sheet_w - card_margin_x, top_header_h - 15)], fill=(48, 54, 61), width=1)
+
+    for i, (scene, thumb) in enumerate(rendered_frames):
+        r = i // cols
+        c = i % cols
+        x = card_margin_x + c * (thumb_width + card_margin_x)
+        y = top_header_h + r * (thumb_height + info_h + card_margin_y)
+
+        sheet.paste(thumb, (x, y))
+        draw.rectangle([x, y, x + thumb_width, y + thumb_height], outline=(56, 62, 70), width=1)
+
+        info_y = y + thumb_height + 12
+        sc_id = scene.get("id", f"scene_{i}")
+        sc_type = scene.get("type", "")
+        sc_dur = scene.get("duration", 0)
+        focal = scene.get("focal_point") or "Singular visual focal point"
+
+        draw.text((x, info_y), f"[{i+1}/{num_scenes}] {sc_id} ({sc_dur:.1f}s)", fill=(240, 246, 252), font=font_sub)
+        draw.text((x, info_y + 26), f"Type: {sc_type}", fill=(139, 148, 158), font=font_meta)
+        draw.text((x, info_y + 48), f"Focal: {focal[:35]}", fill=(56, 189, 248), font=font_meta)
+        if scene.get("personal_signature"):
+            draw.text((x, info_y + 70), f"◆ Aside: {scene['personal_signature'][:32]}", fill=(255, 212, 71), font=font_meta)
+
+    if output_path is None:
+        target_dir = Path("output")
+        target_dir.mkdir(parents=True, exist_ok=True)
+        safe_title = "".join(c if c.isalnum() or c in ("-", "_") else "_" for c in spec_data.get("title", "contact_sheet"))
+        output_path = target_dir / f"{safe_title.lower()}_contact_sheet.png"
+    else:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    sheet.save(str(output_path), "PNG")
+    return output_path
+
+
 def main():
     parser = argparse.ArgumentParser(description="Topic Video Engine 9:16 vertical renderer")
     parser.add_argument("--spec", "-s", required=True, type=Path, help="Path to content specification JSON")
@@ -143,10 +263,53 @@ def main():
         action="store_true",
         help="Allow rendering even if creative brief approval status is pending/draft (for preview drafting)"
     )
+    parser.add_argument(
+        "--contact-sheet",
+        type=Path,
+        nargs="?",
+        const=True,
+        help="Generate preview contact sheet PNG instead of full video render (optionally specify destination path)"
+    )
+    parser.add_argument(
+        "--audit",
+        action="store_true",
+        help="Run pre-flight creative quality and UX audit without rendering"
+    )
 
     args = parser.parse_args()
 
     try:
+        if args.audit:
+            with open(args.spec, "r", encoding="utf-8") as f:
+                spec_data = json.load(f)
+            prof_data = load_profile(spec_data["profile"], profiles_dir=args.profiles_dir)
+            brief_data = None
+            if args.brief:
+                brief_data = load_creative_brief(args.brief)
+            elif "creative_brief" in spec_data:
+                brief_data = load_creative_brief(spec_data["creative_brief"], base_dir=args.spec.parent)
+            res = audit_creative_direction(spec_data, brief_data, prof_data)
+            print("=== Creative Direction Audit ===")
+            print(f"Status: {'PASSED' if res['passed'] else 'ATTENTION RECOMMENDED'}")
+            if res["warnings"]:
+                for w in res["warnings"]:
+                    print(f"  ⚠ {w}")
+            else:
+                print("  ✓ All UX, readability, focal point, and contrast checks passed.")
+            print(f"Info: {res['info']}")
+            return
+
+        if args.contact_sheet:
+            sheet_out = None if args.contact_sheet is True else args.contact_sheet
+            sheet_path = generate_contact_sheet(
+                spec_path=args.spec,
+                output_path=sheet_out,
+                profiles_dir=args.profiles_dir,
+                brief_override=args.brief,
+            )
+            print(f"Contact sheet saved to: {sheet_path}")
+            return
+
         out_path = render_video(
             spec_path=args.spec,
             output_path=args.output,

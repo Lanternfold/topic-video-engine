@@ -33,7 +33,8 @@ class TerminalScene(BaseScene):
         card_x0 = self.pad_x
         card_y0 = content_y + 10
         card_w = self.width - 2 * self.pad_x
-        bottom_space = 80 if footnote else 40
+        has_sig = bool(scene_data.get("personal_signature"))
+        bottom_space = 140 if has_sig else (80 if footnote else 40)
         max_card_h = self.height - self.pad_y - bottom_space - card_y0
 
         card_bg = hex_to_rgb(self.colors.get("code_bg", "#0b0f14"))
@@ -136,6 +137,10 @@ class TerminalScene(BaseScene):
                 fill=secondary_color,
                 font=self.font_caption
             )
+
+        if scene_data.get("personal_signature"):
+            sig_y = card_y1 + 18
+            self.draw_personal_signature(draw, scene_data["personal_signature"], y_pos=sig_y)
 
         if footnote:
             self.draw_footnote(draw, footnote)

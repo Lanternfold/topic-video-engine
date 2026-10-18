@@ -33,7 +33,8 @@ class ChartScene(BaseScene):
         card_x0 = self.pad_x
         card_y0 = content_y + 10
         card_w = self.width - 2 * self.pad_x
-        bottom_space = 80 if footnote else 40
+        has_sig = bool(scene_data.get("personal_signature"))
+        bottom_space = 140 if has_sig else (80 if footnote else 40)
         max_card_h = self.height - self.pad_y - bottom_space - card_y0
 
         total_items = max(len(data_points), 1)
@@ -71,6 +72,8 @@ class ChartScene(BaseScene):
                 is_highlighted = dp.get("highlight", False) or (i == 0 and "highlight" not in dp)
                 if dp.get("color"):
                     item_col = hex_to_rgb(dp["color"])
+                elif dp.get("semantic"):
+                    item_col = self.get_semantic_color(dp["semantic"])
                 elif is_highlighted:
                     item_col = bar_highlight_color
                 else:
@@ -126,6 +129,10 @@ class ChartScene(BaseScene):
                 if i < total_items - 1:
                     div_y = curr_row_y + row_h - 10
                     draw.line([(inner_x, div_y), (inner_x + inner_w, div_y)], fill=card_border, width=1)
+
+        if scene_data.get("personal_signature"):
+            sig_y = card_y1 + 18
+            self.draw_personal_signature(draw, scene_data["personal_signature"], y_pos=sig_y)
 
         if footnote:
             self.draw_footnote(draw, footnote)

@@ -65,12 +65,72 @@ class BaseScene(ABC):
         self.font_badge = get_font(sans_families if "sans_font_families" in self.typography else families, self.typography.get("badge_size", 16))
         self.font_metric = get_font(families, self.typography.get("metric_size", 80))
 
-        # Layout parameters
-        self.pad_x = self.layout.get("padding_x", 120)
-        self.pad_y = self.layout.get("padding_y", 80)
+        # Layout parameters with mobile safe area awareness (Reels & Shorts platform overlays)
+        safe_area = self.layout.get("mobile_safe_area") or self.profile.get("_creative_brief", {}).get("mobile_safe_area") or {}
+        self.safe_top = safe_area.get("top", 120)
+        self.safe_bottom = safe_area.get("bottom", 160)
+        self.safe_sides = safe_area.get("sides", 72)
+
+        self.pad_x = max(self.layout.get("padding_x", 120), self.safe_sides)
+        self.pad_y = max(self.layout.get("padding_y", 80), self.safe_top)
         self.card_pad = self.layout.get("card_padding", 36)
         self.border_radius = self.layout.get("border_radius", 8)
         self.line_spacing = self.layout.get("line_spacing", 10)
+
+    def get_semantic_color(self, role: str, fallback_hex: Optional[str] = None) -> Tuple[int, int, int]:
+        """Resolve semantic role color (defect, discovery, validation, warning, etc.)."""
+        semantic_map = self.colors.get("semantic_roles", {})
+        if not semantic_map and "_creative_brief" in self.profile:
+            palette = self.profile["_creative_brief"].get("palette", {})
+            semantic_map = palette.get("semantic_roles", {})
+
+        if role in semantic_map:
+            return hex_to_rgb(semantic_map[role])
+        if role in self.colors:
+            return hex_to_rgb(self.colors[role])
+        if fallback_hex:
+            return hex_to_rgb(fallback_hex)
+        return hex_to_rgb(self.colors.get("accent", "#FF5C35"))
+
+    def draw_personal_signature(self, draw: ImageDraw.ImageDraw, signature_text: str, y_pos: Optional[int] = None) -> int:
+        """Render understated creator personal signature (~5% subtle fingerprint)."""
+        if not signature_text:
+            return y_pos or (self.height - self.safe_bottom)
+
+        curr_y = y_pos if y_pos is not None else (self.height - self.safe_bottom - 50)
+        max_w = self.width - 2 * self.pad_x
+
+        accent_color = hex_to_rgb(self.colors.get("accent_secondary", self.colors.get("accent", "#FFD447")))
+        card_bg = hex_to_rgb(self.colors.get("card_bg", "#FFFFFF"))
+        card_border = hex_to_rgb(self.colors.get("card_border", "#D8CFBE"))
+        text_color = hex_to_rgb(self.colors.get("secondary", "#3D4050"))
+
+        lines = wrap_text(signature_text, self.font_caption, max_w - 60, draw)
+        lh = 24
+        box_h = len(lines) * lh + 20
+
+        # Draw subtle callout capsule
+        draw.rounded_rectangle(
+            [self.pad_x, curr_y, self.width - self.pad_x, curr_y + box_h],
+            radius=4,
+            fill=card_bg,
+            outline=card_border,
+            width=1
+        )
+        # Left subtle accent bar
+        draw.rectangle(
+            [self.pad_x, curr_y, self.pad_x + 5, curr_y + box_h],
+            fill=accent_color
+        )
+
+        draw.text((self.pad_x + 16, curr_y + 10), "◆", fill=accent_color, font=self.font_caption)
+
+        line_y = curr_y + 10
+        for line in lines:
+            draw.text((self.pad_x + 36, line_y), line, fill=text_color, font=self.font_caption)
+            line_y += lh
+
+        return curr_y + box_h
 
     def create_canvas(self) -> Tuple[Image.Image, ImageDraw.ImageDraw]:
         """Create a blank canvas pre-filled with the profile's background color."""
@@ -195,7 +255,7 @@ class BaseScene(ABC):
         accent_color = hex_to_rgb(self.colors.get("accent", "#38bdf8"))
         tb = draw.textbbox((0, 0), footnote, font=self.font_caption)
         fh = tb[3] - tb[1]
-        fy = self.height - self.pad_y + 20
+        fy = self.height - max(self.pad_y, getattr(self, "safe_bottom", 160)) + 20
 
         # Small accent indicator dot or tick
         draw.rectangle([self.pad_x, fy + 4, self.pad_x + 8, fy + 12], fill=accent_color)

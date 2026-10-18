@@ -15,6 +15,7 @@ class TestSceneRendering(unittest.TestCase):
         cls.profiles = {
             "developer_workflow": load_profile("developer_workflow", Path("config/profiles")),
             "editorial_data_story": load_profile("editorial_data_story", Path("config/profiles")),
+            "kinetic_editorial": load_profile("kinetic_editorial", Path("config/profiles")),
         }
 
     def _test_scene(self, scene_type: str, scene_data: dict):
@@ -89,6 +90,43 @@ class TestSceneRendering(unittest.TestCase):
                     "Third long-term strategy",
                 ],
             },
+        )
+
+    def test_scene_with_personal_signature_and_semantic_colors(self):
+        # Conclusion with personal signature aside
+        self._test_scene(
+            "conclusion",
+            {
+                "headline": "Architectural Directives",
+                "supporting_text": "Summary of lessons",
+                "bullet_points": ["Rule 1", "Rule 2"],
+                "personal_signature": "A cache is a promise. Stale reads are just promises with expiration dates.",
+                "footnote": "Topic Video Engine"
+            }
+        )
+        # Stat callout with semantic defect color
+        self._test_scene(
+            "stat_callout",
+            {
+                "headline": "Telemetry Defect Detection",
+                "stat_value": "4.8s",
+                "stat_label": "Duration of replication partition",
+                "semantic": "defect",
+                "personal_signature": "Notice how silent this error is.",
+                "footnote": "Audit telemetry"
+            }
+        )
+        # Chart with semantic items
+        self._test_scene(
+            "data_chart",
+            {
+                "headline": "Consistency Rates",
+                "data_points": [
+                    {"label": "Stale", "value": 72, "semantic": "defect"},
+                    {"label": "Verified", "value": 98, "semantic": "validation"}
+                ],
+                "personal_signature": "Lease locks eliminate 90% of anomalies."
+            }
         )
 
 

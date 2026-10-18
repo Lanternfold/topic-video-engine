@@ -48,6 +48,14 @@
           "headline": { "type": "string" },
           "supporting_text": { "type": "string" },
           "tag": { "type": "string" },
+          "focal_point": {
+            "type": "string",
+            "description": "Singular visual focal point for the scene"
+          },
+          "personal_signature": {
+            "type": "string",
+            "description": "Optional understated creator aside, unexpected connection, or dry observation"
+          },
           "footnote": { "type": "string" },
           "terminal": {
             "type": "object",

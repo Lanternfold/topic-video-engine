@@ -23,7 +23,11 @@ class StatScene(BaseScene):
         content_y = self.draw_header(draw, headline, tag=tag)
 
         stat_cfg = self.components.get("stat", {})
-        num_color = hex_to_rgb(stat_cfg.get("number_color", "#b91c1c"))
+        if scene_data.get("semantic"):
+            num_color = self.get_semantic_color(scene_data["semantic"])
+        else:
+            num_color = hex_to_rgb(stat_cfg.get("number_color", "#b91c1c"))
+
         lbl_color = hex_to_rgb(stat_cfg.get("label_color", "#1c1917"))
         sec_color = hex_to_rgb(self.colors.get("secondary", "#57534e"))
         card_bg = hex_to_rgb(self.colors.get("card_bg", "#ffffff"))
@@ -33,7 +37,8 @@ class StatScene(BaseScene):
         card_x0 = self.pad_x
         card_y0 = content_y + 10
         card_w = self.width - 2 * self.pad_x
-        bottom_space = 80 if footnote else 40
+        has_sig = bool(scene_data.get("personal_signature"))
+        bottom_space = 140 if has_sig else (80 if footnote else 40)
         max_card_h = self.height - self.pad_y - bottom_space - card_y0
 
         inner_x = card_x0 + self.card_pad + 20
@@ -102,6 +107,10 @@ class StatScene(BaseScene):
                 draw.text((box_x0 + 26, text_y), sl, fill=sec_color, font=self.font_subtitle)
                 sb = draw.textbbox((box_x0 + 26, text_y), sl, font=self.font_subtitle)
                 text_y = sb[3] + self.line_spacing
+
+        if scene_data.get("personal_signature"):
+            sig_y = card_y1 + 18
+            self.draw_personal_signature(draw, scene_data["personal_signature"], y_pos=sig_y)
 
         if footnote:
             self.draw_footnote(draw, footnote)

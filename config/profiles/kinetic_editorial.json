@@ -3,17 +3,34 @@
   "name": "Kinetic Editorial Investigation",
   "description": "High-velocity investigative journalism with stark editorial typography, bold publication rules, dramatic typographic hierarchy, and rapid visual pacing (9:16 vertical)",
   "colors": {
-    "background": "#f6f4ee",
-    "foreground": "#0f172a",
-    "secondary": "#475569",
-    "muted": "#94a3b8",
-    "accent": "#dc2626",
-    "accent_secondary": "#0284c7",
-    "card_bg": "#ffffff",
-    "card_border": "#cbd5e1",
-    "code_bg": "#edebe4",
-    "badge_bg": "#fef2f2",
-    "badge_text": "#dc2626"
+    "background": "#F6F0E6",
+    "foreground": "#171820",
+    "secondary": "#3D4050",
+    "muted": "#74788D",
+    "accent": "#FF5C35",
+    "accent_secondary": "#FFD447",
+    "accent_tertiary": "#65D6C4",
+    "card_bg": "#FFFFFF",
+    "card_border": "#D8CFBE",
+    "code_bg": "#ECE5D7",
+    "badge_bg": "#171820",
+    "badge_text": "#FFD447",
+    "ink": "#171820",
+    "paper": "#F6F0E6",
+    "coral": "#FF5C35",
+    "signal_yellow": "#FFD447",
+    "mint": "#65D6C4",
+    "semantic_roles": {
+      "defect": "#FF5C35",
+      "contradiction": "#FF5C35",
+      "warning": "#FF5C35",
+      "reveal": "#FF5C35",
+      "discovery": "#FFD447",
+      "key_figure": "#FFD447",
+      "question": "#FFD447",
+      "validation": "#65D6C4",
+      "verified": "#65D6C4"
+    }
   },
   "typography": {
     "font_families": [
@@ -44,34 +61,41 @@
     "card_padding": 36,
     "border_radius": 0,
     "header_style": "editorial_rule",
-    "line_spacing": 12
+    "line_spacing": 12,
+    "mobile_safe_area": {
+      "top": 140,
+      "bottom": 180,
+      "sides": 72
+    }
   },
   "components": {
     "terminal": {
       "show_window_dots": false,
       "window_title": "EXHIBIT A // AUDITED STREAM RECORD",
       "prompt_symbol": "›",
-      "prompt_color": "#dc2626",
-      "command_color": "#0f172a",
-      "output_color": "#475569",
-      "success_color": "#0284c7",
-      "error_color": "#dc2626",
+      "prompt_color": "#FF5C35",
+      "command_color": "#171820",
+      "output_color": "#3D4050",
+      "success_color": "#65D6C4",
+      "error_color": "#FF5C35",
+      "warning_color": "#FFD447",
       "status_line": "INGESTION GATE REPORT • DEFECTIVE RECORD QUARANTINED BEFORE PROPAGATION"
     },
     "chart": {
-      "bar_color": "#dc2626",
-      "bar_color_highlight": "#0284c7",
-      "bar_bg": "#e2e8f0",
+      "bar_color": "#FF5C35",
+      "bar_color_highlight": "#FFD447",
+      "bar_color_success": "#65D6C4",
+      "bar_bg": "#E8E0D1",
       "bar_height": 42,
       "bar_radius": 0,
-      "grid_color": "#cbd5e1",
-      "label_color": "#0f172a",
-      "value_color": "#0f172a"
+      "grid_color": "#D8CFBE",
+      "label_color": "#171820",
+      "value_color": "#171820"
     },
     "stat": {
-      "number_color": "#dc2626",
-      "label_color": "#0f172a",
-      "rule_color": "#dc2626"
+      "number_color": "#FF5C35",
+      "label_color": "#171820",
+      "rule_color": "#FF5C35"
     }
   }
 }

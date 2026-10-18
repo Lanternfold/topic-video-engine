@@ -9,16 +9,18 @@ A local video-production engine with shared rendering infrastructure and topic-s
 
 ## Visual Direction & Creative Briefs
 Each video supports its own **creative brief** to define:
-- Target visual mood and art direction
-- Scene cadence and pacing recommendations
-- Transition style
-- Optional palette and typography overrides on top of the base profile
-- Sound design cues and background music recommendations
-- Strategic rationale
-- Auditable evidence (source URLs, retrieved timestamps, notes)
+- Target visual mood, premise, target audience, and chosen art direction
+- 5-stage short-form narrative cadence (Hook → Context → Development → Payoff → Exit)
+- Single dominant focal points per scene
+- Palette with semantic role mappings (Ink, Paper, Coral, Signal Yellow, Mint)
+- Mobile safe-area constraints (avoiding Instagram & YouTube UI overlays)
+- Optional subtle creator personal signature (~5% presence, understated aside or observation)
+- Sound design cues, music licensing status, and audio mix notes
+- Auditable evidence with source URLs, claims, and verification statuses
 - Human review and approval status (`approved`, `pending_review`, `draft`, `rejected`)
 
 > **Approval Requirement:** The engine enforces human approval (`approval.status == "approved"`) before final export. Use `--allow-unapproved` only during early preview drafting.
+> **Review Checklist:** Review creative treatments against [`CREATIVE_REVIEW_CHECKLIST.md`](CREATIVE_REVIEW_CHECKLIST.md).
 
 ---
 
@@ -55,16 +57,44 @@ python src/renderer/render.py --spec prototypes/editorial_data_story/sample.json
 ```
 Output: `output/editorial_data_story_demo.mp4` (1080 × 1920 @ 30fps)
 
+#### 3. Kinetic Editorial Investigation (Creative Direction Upgrade Showcase)
+```bash
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json
+```
+Output: `output/kinetic_editorial_demo.mp4` (1080 × 1920 @ 30fps)
+
+---
+
+### Creative Direction Review & Preview Tools
+
+#### 1. Generate High-Resolution Contact Sheet
+Review all scene hero frames, focal points, safe areas, and narrative progression in a single glance:
+```bash
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --contact-sheet output/review_sheet.png
+```
+
+#### 2. Pre-flight Quality & UX Audit
+Check contrast ratios (WCAG AA), safe area margins, focal points, and evidence verification without rendering:
+```bash
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --audit
+```
+
 #### CLI Options
 ```bash
 # Custom output path
-python src/renderer/render.py --spec prototypes/developer_workflow/sample.json --output output/custom_vertical.mp4
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --output output/custom_vertical.mp4
 
 # Provide external creative brief
-python src/renderer/render.py --spec prototypes/developer_workflow/sample.json --brief path/to/brief.json
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --brief path/to/brief.json
 
 # Draft preview (allows unapproved briefs)
-python src/renderer/render.py --spec prototypes/developer_workflow/sample.json --allow-unapproved
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --allow-unapproved
+
+# Contact sheet preview
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --contact-sheet
+
+# Pre-flight audit
+python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --audit
 ```
 
 ---
@@ -84,10 +114,15 @@ python tests/validate_video.py output/developer_workflow_demo.mp4 --width 1080 -
 
 # Verify editorial data story video
 python tests/validate_video.py output/editorial_data_story_demo.mp4 --width 1080 --height 1920 --fps 30 --duration 13.0
+
+# Verify kinetic editorial investigation video
+python tests/validate_video.py output/kinetic_editorial_demo.mp4 --width 1080 --height 1920 --fps 30 --duration 16.5
 ```
 
 ---
 
-## Schemas
+## Schemas & Guidelines
 - Content specification schema: [`config/schemas/content-spec.example.json`](config/schemas/content-spec.example.json)
 - Creative brief schema: [`config/schemas/creative-brief.example.json`](config/schemas/creative-brief.example.json)
+- Human review checklist: [`CREATIVE_REVIEW_CHECKLIST.md`](CREATIVE_REVIEW_CHECKLIST.md)
+

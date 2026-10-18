@@ -127,6 +127,103 @@ class TestValidation(unittest.TestCase):
         self.assertEqual(merged["typography"]["font_families"], ["Georgia"])
         self.assertEqual(merged["_creative_brief"]["visual_mood"], "Vibrant custom red")
 
+    def test_creative_brief_upgrade_fields(self):
+        valid_upgraded_brief = {
+            "title": "Kinetic Brief",
+            "base_profile": "kinetic_editorial",
+            "visual_mood": "High energy investigative",
+            "pacing": "Fast",
+            "transitions": "Editorial wipe",
+            "rationale": "High contrast mobile engagement",
+            "art_direction": {
+                "treatment": "kinetic_editorial",
+                "rationale": "High velocity typography"
+            },
+            "motion_intensity": "kinetic",
+            "personal_signature": {
+                "type": "dry_aside",
+                "moment": "Closing takeaway note",
+                "rationale": "Understated observation"
+            },
+            "mobile_safe_area": {"top": 140, "bottom": 180, "sides": 72},
+            "evidence": [
+                {
+                    "source_url": "https://example.com/data",
+                    "retrieved_at": "2026-10-18T12:00:00Z",
+                    "note": "Audited benchmark figures",
+                    "verification_status": "verified"
+                }
+            ],
+            "approval": {"status": "approved"}
+        }
+        errors = validate_creative_brief(valid_upgraded_brief)
+        self.assertEqual(errors, [])
+
+        # Invalid treatment
+        bad_art = dict(valid_upgraded_brief)
+        bad_art["art_direction"] = {"treatment": "invalid_treatment_type"}
+        errs = validate_creative_brief(bad_art)
+        self.assertTrue(any("art_direction.treatment" in e for e in errs))
+
+        # Invalid motion intensity
+        bad_motion = dict(valid_upgraded_brief)
+        bad_motion["motion_intensity"] = "ultra_hyper_speed"
+        errs = validate_creative_brief(bad_motion)
+        self.assertTrue(any("motion_intensity" in e for e in errs))
+
+        # Invalid personal signature type
+        bad_sig = dict(valid_upgraded_brief)
+        bad_sig["personal_signature"] = {"type": "flamboyant_dance"}
+        errs = validate_creative_brief(bad_sig)
+        self.assertTrue(any("personal_signature.type" in e for e in errs))
+
+        # Invalid evidence verification status
+        bad_ev = dict(valid_upgraded_brief)
+        bad_ev["evidence"] = [{"source_url": "https://example.com", "retrieved_at": "2026-10-18", "note": "test", "verification_status": "fabricated"}]
+        errs = validate_creative_brief(bad_ev)
+        self.assertTrue(any("verification_status" in e for e in errs))
+
+    def test_contrast_ratio_calculation(self):
+        from src.renderer.validator import calculate_contrast_ratio
+        # Black and white is 21.0
+        self.assertEqual(calculate_contrast_ratio("#000000", "#ffffff"), 21.0)
+        # Identical colors is 1.0
+        self.assertEqual(calculate_contrast_ratio("#ffffff", "#ffffff"), 1.0)
+        # Ink (#171820) and Paper (#F6F0E6) is > 15:1
+        ratio = calculate_contrast_ratio("#171820", "#F6F0E6")
+        self.assertGreater(ratio, 15.0)
+
+    def test_audit_creative_direction(self):
+        from src.renderer.validator import audit_creative_direction
+        spec = {
+            "title": "Audit Test",
+            "profile": "kinetic_editorial",
+            "scenes": [
+                {"id": "s1", "type": "title", "duration": 6.0, "headline": "Test 1", "focal_point": "Title focal point"},
+                {"id": "s2", "type": "conclusion", "duration": 6.0, "headline": "Test 2", "focal_point": "Conclusion focal point"}
+            ]
+        }
+        brief = {
+            "visual_mood": "High energy",
+            "palette": {"background": "#F6F0E6", "foreground": "#171820"},
+            "approval": {"status": "approved"}
+        }
+        profile = {
+            "colors": {"background": "#F6F0E6", "foreground": "#171820"},
+            "layout": {"padding_x": 72, "padding_y": 140}
+        }
+        res = audit_creative_direction(spec, brief, profile)
+        self.assertTrue(res["passed"])
+        self.assertEqual(res["warnings"], [])
+
+        # Low contrast warning
+        low_contrast_brief = {
+            "palette": {"background": "#e0e0e0", "foreground": "#ffffff"}
+        }
+        res_warn = audit_creative_direction(spec, low_contrast_brief, profile)
+        self.assertFalse(res_warn["passed"])
+        self.assertTrue(any("contrast ratio" in w for w in res_warn["warnings"]))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -31,6 +31,68 @@
       "type": "string",
       "description": "Scene transition style (e.g. 'clean_cut', 'crossfade')"
     },
+    "story_premise": {
+      "type": "string",
+      "description": "Core narrative premise and factual foundation"
+    },
+    "target_audience": {
+      "type": "string",
+      "description": "Intended viewer demographic, domain context, and platform expectations"
+    },
+    "curiosity_question": {
+      "type": "string",
+      "description": "Primary curiosity hook or contradiction compelling the viewer to watch"
+    },
+    "emotional_progression": {
+      "type": "string",
+      "description": "Intended psychological trajectory across the narrative (e.g. curiosity -> tension -> clarity)"
+    },
+    "opening_hook": {
+      "type": "object",
+      "description": "First 1.5-second visual and conceptual hook design",
+      "properties": {
+        "text": { "type": "string" },
+        "visual_treatment": { "type": "string" },
+        "focal_point": { "type": "string" }
+      }
+    },
+    "art_direction": {
+      "type": "object",
+      "description": "Selected visual treatment and aesthetic rationale",
+      "properties": {
+        "treatment": {
+          "type": "string",
+          "enum": [
+            "kinetic_editorial",
+            "investigative",
+            "data_driven",
+            "documentary",
+            "playful_explanatory",
+            "experimental"
+          ]
+        },
+        "rationale": { "type": "string" }
+      }
+    },
+    "motion_intensity": {
+      "type": "string",
+      "enum": ["subtle", "measured", "moderate", "high", "kinetic"],
+      "description": "Overall kinetic pacing and animation density"
+    },
+    "mobile_safe_area": {
+      "type": "object",
+      "description": "Platform UI overlay clearance boundaries (in pixels)",
+      "properties": {
+        "top": { "type": "integer", "default": 140 },
+        "bottom": { "type": "integer", "default": 180 },
+        "sides": { "type": "integer", "default": 72 }
+      }
+    },
+    "scene_focal_points": {
+      "type": "array",
+      "description": "Scene-by-scene singular dominant visual focal points",
+      "items": { "type": "string" }
+    },
     "palette": {
       "type": "object",
       "description": "Optional custom palette overrides over the base profile",
@@ -40,7 +102,22 @@
         "accent": { "type": "string" },
         "accent_secondary": { "type": "string" },
         "card_bg": { "type": "string" },
-        "card_border": { "type": "string" }
+        "card_border": { "type": "string" },
+        "ink": { "type": "string", "description": "High-energy editorial ink base" },
+        "paper": { "type": "string", "description": "High-energy editorial paper base" },
+        "coral": { "type": "string", "description": "Editorial coral for defects, contradictions, warnings" },
+        "signal_yellow": { "type": "string", "description": "Editorial yellow for key figures, questions, discoveries" },
+        "mint": { "type": "string", "description": "Editorial mint for verified facts, validations, contrasting categories" },
+        "semantic_roles": {
+          "type": "object",
+          "description": "Explicit semantic mapping from domain roles to colors",
+          "properties": {
+            "defect": { "type": "string" },
+            "discovery": { "type": "string" },
+            "validation": { "type": "string" },
+            "warning": { "type": "string" }
+          }
+        }
       }
     },
     "typography": {
@@ -50,6 +127,14 @@
         "font_families": {
           "type": "array",
           "items": { "type": "string" }
+        },
+        "hierarchy": {
+          "type": "object",
+          "description": "Weight and sizing contrast guidelines"
+        },
+        "animation_behaviour": {
+          "type": "string",
+          "description": "Kinetic typography behavior (e.g. progressive reveals, emphasis pulses)"
         }
       }
     },
@@ -68,7 +153,47 @@
       "properties": {
         "genre": { "type": "string" },
         "tempo_bpm": { "type": "integer" },
-        "mood_description": { "type": "string" }
+        "mood_description": { "type": "string" },
+        "licensing_status": {
+          "type": "string",
+          "enum": ["verified_royalty_free", "licensed_library", "platform_native_only", "unverified"]
+        }
+      }
+    },
+    "narration": {
+      "type": "object",
+      "properties": {
+        "style": { "type": "string" },
+        "mix_notes": { "type": "string" }
+      }
+    },
+    "personal_signature": {
+      "type": "object",
+      "description": "Subtle creator fingerprint (~5% presence, understated and story-reinforcing)",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "dry_aside",
+            "understated_observation",
+            "surprising_connection",
+            "deliberate_pause",
+            "visual_metaphor",
+            "thoughtful_exit"
+          ]
+        },
+        "moment": { "type": "string" },
+        "rationale": { "type": "string" }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "Accessibility and mobile readability compliance",
+      "properties": {
+        "contrast_target": { "type": "string", "default": "WCAG_AA" },
+        "color_blind_safe": { "type": "boolean", "default": true },
+        "sound_independent": { "type": "boolean", "default": true }
       }
     },
     "rationale": {
@@ -77,14 +202,20 @@
     },
     "evidence": {
       "type": "array",
-      "description": "Verified source URLs and retrieval timestamps",
+      "description": "Verified source URLs, claims, and retrieval timestamps",
       "items": {
         "type": "object",
         "required": ["source_url", "retrieved_at", "note"],
         "properties": {
           "source_url": { "type": "string", "format": "uri" },
           "retrieved_at": { "type": "string" },
-          "note": { "type": "string" }
+          "note": { "type": "string" },
+          "claim": { "type": "string" },
+          "verification_status": {
+            "type": "string",
+            "enum": ["verified", "unverified", "contested"],
+            "default": "verified"
+          }
         }
       }
     },

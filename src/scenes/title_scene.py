@@ -334,6 +334,10 @@ class TitleScene(BaseScene):
                 font=self.font_caption,
             )
 
+        if scene_data.get("personal_signature"):
+            sig_y = self.height - max(self.pad_y, getattr(self, "safe_bottom", 160)) - 70
+            self.draw_personal_signature(draw, scene_data["personal_signature"], y_pos=sig_y)
+
         if footnote:
             self.draw_footnote(draw, footnote)
 
