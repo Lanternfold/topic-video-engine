@@ -34,19 +34,21 @@
       {
         "source_url": "https://www.gartner.com/en/newsroom/press-releases",
         "retrieved_at": "2026-10-11T19:45:00Z",
-        "note": "Enterprise cloud waste estimate methodology and aggregate spending benchmarks"
+        "note": "Enterprise cloud waste estimate methodology and aggregate spending benchmarks",
+        "verification_status": "unverified"
       },
       {
         "source_url": "https://www.flexera.com/blog/cloud/cloud-computing-trends-state-of-the-cloud-report/",
         "retrieved_at": "2026-10-11T19:50:00Z",
-        "note": "Cross-sector survey data on unallocated capacity and weekend idle utilization"
+        "note": "Cross-sector survey data on unallocated capacity and weekend idle utilization",
+        "verification_status": "unverified"
       }
     ],
     "approval": {
       "status": "approved",
       "approved_by": "editorial_director",
       "approved_at": "2026-10-11T20:35:00Z",
-      "notes": "Verified Gartner and Flexera survey citations. Data points match audited figures."
+      "notes": "Creative direction approved; verify each statistic against a specific source passage or dataset before publication."
     }
   },
   "output": {
