@@ -30,15 +30,15 @@ For every factual claim:
 
 ## Timeline and motion implementation status
 
-The first frame-timeline layer now schedules contiguous, zero-based scene frame ranges and supports deterministic per-frame camera transforms: `push_in`, `pull_out`, `pan_left`, and `pan_right`. Scenes without a motion setting remain static. Motion strength is bounded to avoid unexpectedly aggressive crops.
+The frame-timeline layer schedules contiguous, zero-based scene frame ranges and supports deterministic per-frame camera transforms: `push_in`, `pull_out`, `pan_left`, and `pan_right`. Scene-relative caption tracks can now burn text into frames using half-open `[start, end)` intervals, with wrapping and a bottom/side safe-area offset. Motion and captions use the same frame clock.
 
-This is a foundation, not the full timeline system. Cross-scene transitions, timed caption tracks, narration, music, audio mixing, and synchronization between those tracks remain future work. The frame clock should be the shared timing source for those features.
+This is still not a full timeline system. Cross-scene transitions, narration generation, music, audio mixing, word-level speech alignment, and synchronized audio tracks remain future work.
 
 ## Production and validation gaps to close
 
-- Current renderer is known to render a still image per scene and hold it for the scene duration; this is not equivalent to implemented motion design.
-- Motion, pacing, and transition fields must drive actual timeline behavior rather than act only as descriptive metadata.
-- Narration, audio mix, caption timing, and scene timing need a shared timeline model.
+- Cross-scene transitions, narration generation, audio mixing, and word-level speech alignment remain unimplemented.
+- Caption tracks are scene-relative and manually time-coded; automatic transcription or word-level sync is not implemented.
+- Validate caption safe-area placement visually on phone-sized previews.
 - Safe-area constraints need to be applied consistently by rendering and audit code.
 - Audit should run the relevant validation checks or clearly report which checks it omits.
 - Final export should be validated with automated tests and media inspection, then reviewed at phone size.
