@@ -453,6 +453,30 @@ def validate_spec(spec_data: Dict[str, Any], require_approval: bool = True) -> L
             if not headline or not str(headline).strip():
                 errors.append(f"Scene '{scene_ref}' (index {i}) is missing 'headline'")
 
+            # Scene-relative caption intervals are half-open [start, end).
+            captions = scene.get("captions", [])
+            if not isinstance(captions, list):
+                errors.append(f"Scene '{scene_ref}' 'captions' must be a list")
+            else:
+                previous_start = -1.0
+                for caption_idx, caption in enumerate(captions):
+                    if not isinstance(caption, dict):
+                        errors.append(f"Scene '{scene_ref}' caption {caption_idx} must be an object")
+                        continue
+                    start = caption.get("start")
+                    end = caption.get("end")
+                    text = caption.get("text")
+                    if not isinstance(start, (int, float)) or start < 0:
+                        errors.append(f"Scene '{scene_ref}' caption {caption_idx} start must be non-negative")
+                    if not isinstance(end, (int, float)) or not isinstance(duration, (int, float)) or end <= (start if isinstance(start, (int, float)) else -1) or end > duration:
+                        errors.append(f"Scene '{scene_ref}' caption {caption_idx} end must be after start and no later than scene duration")
+                    if not isinstance(text, str) or not text.strip():
+                        errors.append(f"Scene '{scene_ref}' caption {caption_idx} text must be non-empty")
+                    if isinstance(start, (int, float)):
+                        if start < previous_start:
+                            errors.append(f"Scene '{scene_ref}' captions must be ordered by start time")
+                        previous_start = start
+
             if scene_type in ("data_chart", "chart"):
                 dps = scene.get("data_points")
                 if dps is not None and not isinstance(dps, list):
