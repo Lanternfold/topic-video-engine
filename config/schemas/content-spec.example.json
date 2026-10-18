@@ -183,6 +183,33 @@
                 "additionalProperties": false
               }
             ]
+          },
+          "captions": {
+            "type": "array",
+            "description": "Optional burned-in scene-relative captions; times are seconds from scene start and intervals are [start,end).",
+            "items": {
+              "type": "object",
+              "required": [
+                "start",
+                "end",
+                "text"
+              ],
+              "properties": {
+                "start": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
           }
         }
       }
