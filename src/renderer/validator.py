@@ -423,6 +423,36 @@ def validate_spec(spec_data: Dict[str, Any], require_approval: bool = True) -> L
             "Add a brief and obtain human approval before final rendering."
         )
 
+    # Optional external audio tracks, mixed against the video frame clock.
+    audio_cfg = spec_data.get("audio", {})
+    if not isinstance(audio_cfg, dict):
+        errors.append("Top-level 'audio' must be an object")
+        audio_cfg = {}
+    audio_tracks = audio_cfg.get("tracks", [])
+    if not isinstance(audio_tracks, list):
+        errors.append("Audio 'tracks' must be a list")
+    else:
+        for audio_idx, track in enumerate(audio_tracks):
+            if not isinstance(track, dict):
+                errors.append(f"Audio track {audio_idx} must be an object")
+                continue
+            source = track.get("source")
+            if not isinstance(source, str) or not source.strip():
+                errors.append(f"Audio track {audio_idx} requires a non-empty source path")
+            start = track.get("start", 0.0)
+            gain = track.get("gain", 1.0)
+            duration = track.get("duration")
+            if not isinstance(start, (int, float)) or not __import__("math").isfinite(start) or start < 0:
+                errors.append(f"Audio track {audio_idx} start must be a finite non-negative number")
+            if not isinstance(gain, (int, float)) or not __import__("math").isfinite(gain) or not 0 <= gain <= 4:
+                errors.append(f"Audio track {audio_idx} gain must be between 0 and 4")
+            if duration is not None and (
+                not isinstance(duration, (int, float))
+                or not __import__("math").isfinite(duration)
+                or duration <= 0
+            ):
+                errors.append(f"Audio track {audio_idx} duration must be a positive finite number")
+
     # Scenes validation
     scenes = spec_data.get("scenes", [])
     if not isinstance(scenes, list) or len(scenes) == 0:
