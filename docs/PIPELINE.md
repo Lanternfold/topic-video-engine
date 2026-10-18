@@ -28,6 +28,12 @@ For every factual claim:
 - Do not label a claim verified solely because the sample spec says so.
 - Treat precise statistics and benchmark claims as high-risk until directly substantiated.
 
+## Timeline and motion implementation status
+
+The first frame-timeline layer now schedules contiguous, zero-based scene frame ranges and supports deterministic per-frame camera transforms: `push_in`, `pull_out`, `pan_left`, and `pan_right`. Scenes without a motion setting remain static. Motion strength is bounded to avoid unexpectedly aggressive crops.
+
+This is a foundation, not the full timeline system. Cross-scene transitions, timed caption tracks, narration, music, audio mixing, and synchronization between those tracks remain future work. The frame clock should be the shared timing source for those features.
+
 ## Production and validation gaps to close
 
 - Current renderer is known to render a still image per scene and hold it for the scene duration; this is not equivalent to implemented motion design.

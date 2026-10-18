@@ -3,7 +3,12 @@
   "title": "TopicVideoContentSpec",
   "description": "Content specification schema example for Topic Video Engine (9:16 vertical Reels & Shorts)",
   "type": "object",
-  "required": ["title", "profile", "creative_brief", "scenes"],
+  "required": [
+    "title",
+    "profile",
+    "creative_brief",
+    "scenes"
+  ],
   "properties": {
     "title": {
       "type": "string",
@@ -16,17 +21,32 @@
     "creative_brief": {
       "description": "Required creative brief object or path to creative brief JSON file; human approval is required for final rendering",
       "oneOf": [
-        { "type": "string" },
-        { "type": "object" }
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        }
       ]
     },
     "output": {
       "type": "object",
       "properties": {
-        "filename": { "type": "string" },
-        "width": { "type": "integer", "default": 1080 },
-        "height": { "type": "integer", "default": 1920 },
-        "fps": { "type": "integer", "default": 30 }
+        "filename": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "default": 1080
+        },
+        "height": {
+          "type": "integer",
+          "default": 1920
+        },
+        "fps": {
+          "type": "integer",
+          "default": 30
+        }
       }
     },
     "scenes": {
@@ -34,20 +54,38 @@
       "description": "Ordered list of scenes to render",
       "items": {
         "type": "object",
-        "required": ["type", "headline", "duration"],
+        "required": [
+          "type",
+          "headline",
+          "duration"
+        ],
         "properties": {
-          "id": { "type": "string" },
+          "id": {
+            "type": "string"
+          },
           "type": {
             "type": "string",
-            "enum": ["title", "terminal_workflow", "data_chart", "stat_callout", "conclusion"]
+            "enum": [
+              "title",
+              "terminal_workflow",
+              "data_chart",
+              "stat_callout",
+              "conclusion"
+            ]
           },
           "duration": {
             "type": "number",
             "description": "Scene duration in seconds (must be > 0)"
           },
-          "headline": { "type": "string" },
-          "supporting_text": { "type": "string" },
-          "tag": { "type": "string" },
+          "headline": {
+            "type": "string"
+          },
+          "supporting_text": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          },
           "focal_point": {
             "type": "string",
             "description": "Singular visual focal point for the scene"
@@ -56,14 +94,20 @@
             "type": "string",
             "description": "Optional understated creator aside, unexpected connection, or dry observation"
           },
-          "footnote": { "type": "string" },
+          "footnote": {
+            "type": "string"
+          },
           "terminal": {
             "type": "object",
             "properties": {
-              "command": { "type": "string" },
+              "command": {
+                "type": "string"
+              },
               "output": {
                 "type": "array",
-                "items": { "type": "string" }
+                "items": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -71,19 +115,74 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["label", "value"],
+              "required": [
+                "label",
+                "value"
+              ],
               "properties": {
-                "label": { "type": "string" },
-                "value": { "type": "number" },
-                "unit": { "type": "string" }
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string"
+                }
               }
             }
           },
-          "stat_value": { "type": "string" },
-          "stat_label": { "type": "string" },
+          "stat_value": {
+            "type": "string"
+          },
+          "stat_label": {
+            "type": "string"
+          },
           "bullet_points": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
+          },
+          "motion": {
+            "description": "Optional actual per-frame camera motion. Omit for static rendering.",
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "static",
+                  "push_in",
+                  "pull_out",
+                  "pan_left",
+                  "pan_right"
+                ]
+              },
+              {
+                "type": "object",
+                "required": [
+                  "preset"
+                ],
+                "properties": {
+                  "preset": {
+                    "type": "string",
+                    "enum": [
+                      "static",
+                      "push_in",
+                      "pull_out",
+                      "pan_left",
+                      "pan_right"
+                    ]
+                  },
+                  "strength": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 0.25,
+                    "default": 0.08
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
           }
         }
       }

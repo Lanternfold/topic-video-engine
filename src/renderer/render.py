@@ -18,6 +18,7 @@ if str(REPO_ROOT) not in sys.path:
 from PIL import Image, ImageDraw
 
 from src.renderer.ffmpeg_writer import FFmpegWriter
+from src.renderer.timeline import apply_motion, build_timeline
 from src.renderer.validator import (
     ValidationError,
     audit_creative_direction,
@@ -100,8 +101,9 @@ def render_video(
         output_path = Path(output_path)
 
     scenes = spec_data.get("scenes", [])
-    total_duration = sum(s.get("duration", 0.0) for s in scenes)
-    total_expected_frames = sum(max(1, round(s.get("duration", 0.0) * fps)) for s in scenes)
+    timeline = build_timeline(scenes, fps)
+    total_duration = sum(segment.duration_seconds for segment in timeline)
+    total_expected_frames = sum(segment.frame_count for segment in timeline)
 
     if verbose:
         print(f"[Engine] Rendering '{spec_data.get('title')}'")
@@ -126,17 +128,38 @@ def render_video(
         for idx, scene in enumerate(scenes):
             scene_id = scene.get("id", f"scene_{idx}")
             scene_type = scene.get("type", "unknown")
-            duration = float(scene.get("duration", 1.0))
-            frame_count = max(1, round(duration * fps))
+            segment = timeline[idx]
+            frame_count = segment.frame_count
+            motion_cfg = scene.get("motion", {})
+            if isinstance(motion_cfg, str):
+                motion_cfg = {"preset": motion_cfg}
+            motion_preset = motion_cfg.get("preset", "static")
+            motion_strength = motion_cfg.get("strength", 0.08)
 
             if verbose:
-                print(f"  [{idx+1}/{len(scenes)}] Rendering '{scene_id}' ({scene_type}, {duration:.1f}s -> {frame_count} frames)...")
+                print(
+                    f"  [{idx+1}/{len(scenes)}] Rendering '{scene_id}' "
+                    f"({scene_type}, {segment.duration_seconds:.1f}s -> {frame_count} frames, "
+                    f"motion={motion_preset})..."
+                )
 
             renderer = get_scene_renderer(scene_type, profile=profile_data, width=width, height=height)
             frame_img = renderer.render(scene)
 
-            # Stream static scene frames to FFmpeg
-            writer.write_frame_repeated(frame_img, frame_count)
+            if motion_preset == "static" or motion_strength == 0:
+                writer.write_frame_repeated(frame_img, frame_count)
+            else:
+                # Render every frame from the shared frame clock. No per-frame
+                # duration rounding occurs inside the scene loop.
+                for frame_index in range(frame_count):
+                    progress = frame_index / max(1, frame_count - 1)
+                    motion_frame = apply_motion(
+                        frame_img,
+                        preset=motion_preset,
+                        progress=progress,
+                        strength=motion_strength,
+                    )
+                    writer.write_frame(motion_frame)
 
     elapsed = time.time() - start_time
     file_size_kb = output_path.stat().st_size / 1024
