@@ -20,6 +20,7 @@ from PIL import Image, ImageDraw
 from src.renderer.ffmpeg_writer import FFmpegWriter
 from src.renderer.timeline import apply_motion, build_timeline
 from src.renderer.captions import active_caption, draw_caption
+from src.renderer.audio import AudioMixError, mux_audio_tracks
 from src.renderer.validator import (
     ValidationError,
     audit_creative_direction,
@@ -180,6 +181,19 @@ def render_video(
                             side_safe_area=side_safe,
                         )
                     writer.write_frame(motion_frame)
+
+    # Audio tracks are mixed and muxed after video frames are encoded. Their
+    # offsets and final trim use the exact duration implied by the frame clock.
+    audio_cfg = spec_data.get("audio", {})
+    audio_tracks = audio_cfg.get("tracks", []) if isinstance(audio_cfg, dict) else []
+    if audio_tracks:
+        frame_clock_duration = total_expected_frames / fps
+        mux_audio_tracks(
+            output_path,
+            audio_tracks,
+            video_duration=frame_clock_duration,
+            base_dir=spec_path.parent,
+        )
 
     elapsed = time.time() - start_time
     file_size_kb = output_path.stat().st_size / 1024
