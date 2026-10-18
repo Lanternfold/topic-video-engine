@@ -39,6 +39,13 @@ class TestValidation(unittest.TestCase):
         valid_spec = {
             "title": "Test 9:16 Video",
             "profile": "developer_workflow",
+            "creative_brief": {
+                "visual_mood": "Test",
+                "pacing": "Measured",
+                "transitions": "Hard cuts",
+                "rationale": "Test fixture",
+                "approval": {"status": "approved"},
+            },
             "output": {"width": 1080, "height": 1920, "fps": 30},
             "scenes": [
                 {
@@ -51,6 +58,16 @@ class TestValidation(unittest.TestCase):
         }
         errors = validate_spec(valid_spec)
         self.assertEqual(errors, [])
+
+    def test_missing_creative_brief_rejected_when_approval_required(self):
+        spec = {
+            "title": "No Brief",
+            "profile": "developer_workflow",
+            "scenes": [{"type": "title", "duration": 1.0, "headline": "Test"}],
+        }
+        errors = validate_spec(spec, require_approval=True)
+        self.assertTrue(any("creative_brief' is required" in err for err in errors))
+        self.assertEqual(validate_spec(spec, require_approval=False), [])
 
     def test_missing_required_fields(self):
         bad_spec = {"title": "Missing Scenes and Profile"}
@@ -176,6 +193,16 @@ class TestValidation(unittest.TestCase):
         bad_sig["personal_signature"] = {"type": "flamboyant_dance"}
         errs = validate_creative_brief(bad_sig)
         self.assertTrue(any("personal_signature.type" in e for e in errs))
+
+        # Missing evidence verification status must not silently pass.
+        missing_status = dict(valid_upgraded_brief)
+        missing_status["evidence"] = [{
+            "source_url": "https://example.com",
+            "retrieved_at": "2026-10-18",
+            "note": "test",
+        }]
+        errs = validate_creative_brief(missing_status)
+        self.assertTrue(any("missing 'verification_status'" in e for e in errs))
 
         # Invalid evidence verification status
         bad_ev = dict(valid_upgraded_brief)
