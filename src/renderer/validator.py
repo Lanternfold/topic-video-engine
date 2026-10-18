@@ -108,7 +108,9 @@ def validate_creative_brief(brief: Dict[str, Any], require_approval: bool = True
                     if req not in item or not str(item[req]).strip():
                         errors.append(f"Evidence item {idx} is missing '{req}'")
                 v_stat = item.get("verification_status")
-                if v_stat and v_stat not in ("verified", "unverified", "contested"):
+                if not v_stat:
+                    errors.append(f"Evidence item {idx} is missing 'verification_status'")
+                elif v_stat not in ("verified", "unverified", "contested"):
                     errors.append(f"Evidence item {idx} verification_status '{v_stat}' is invalid")
 
     # Validate art direction if provided
@@ -384,6 +386,11 @@ def validate_spec(spec_data: Dict[str, Any], require_approval: bool = True) -> L
             errors.extend(brief_errors)
         except ValidationError as e:
             errors.append(str(e))
+    elif require_approval:
+        errors.append(
+            "Top-level field 'creative_brief' is required when approval is enforced. "
+            "Add a brief and obtain human approval before final rendering."
+        )
 
     # Scenes validation
     scenes = spec_data.get("scenes", [])

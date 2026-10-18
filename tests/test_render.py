@@ -106,6 +106,26 @@ class TestRenderEndToEnd(unittest.TestCase):
             if tmp_path.is_file():
                 tmp_path.unlink()
 
+    def test_render_rejects_missing_creative_brief(self):
+        spec = {
+            "title": "No Brief",
+            "profile": "developer_workflow",
+            "output": {"width": 1080, "height": 1920, "fps": 30},
+            "scenes": [{"type": "title", "headline": "Draft", "duration": 1.0}],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            import json
+            json.dump(spec, f)
+            spec_path = Path(f.name)
+
+        try:
+            with self.assertRaises(ValidationError) as ctx:
+                render_video(spec_path=spec_path, require_approval=True, verbose=False)
+            self.assertIn("creative_brief' is required", str(ctx.exception))
+        finally:
+            if spec_path.is_file():
+                spec_path.unlink()
+
     def test_render_rejects_unapproved_creative_brief(self):
         # Create temporary unapproved spec
         unapproved_spec = {

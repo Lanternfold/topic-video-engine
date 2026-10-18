@@ -3,7 +3,7 @@
   "title": "TopicVideoContentSpec",
   "description": "Content specification schema example for Topic Video Engine (9:16 vertical Reels & Shorts)",
   "type": "object",
-  "required": ["title", "profile", "scenes"],
+  "required": ["title", "profile", "creative_brief", "scenes"],
   "properties": {
     "title": {
       "type": "string",
@@ -14,7 +14,7 @@
       "description": "Art-direction base profile ID (e.g. 'developer_workflow', 'editorial_data_story')"
     },
     "creative_brief": {
-      "description": "Optional creative brief object or path to creative brief JSON file",
+      "description": "Required creative brief object or path to creative brief JSON file; human approval is required for final rendering",
       "oneOf": [
         { "type": "string" },
         { "type": "object" }

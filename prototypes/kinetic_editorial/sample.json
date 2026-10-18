@@ -97,21 +97,21 @@
         "retrieved_at": "2026-10-18T10:15:00Z",
         "claim": "Partitioned caching clusters drop invalidation packets without generating socket-level exceptions.",
         "note": "Jepsen distributed consistency analysis and stale-read benchmarks under network partitions",
-        "verification_status": "verified"
+        "verification_status": "unverified"
       },
       {
         "source_url": "https://www.usenix.org/conference/osdi20",
         "retrieved_at": "2026-10-18T10:30:00Z",
         "claim": "Read-repair mechanisms exhibit multi-second drift windows in high-throughput microservice fabrics.",
         "note": "Peer-reviewed USENIX systems review of distributed cache invalidation correctness",
-        "verification_status": "verified"
+        "verification_status": "unverified"
       }
     ],
     "approval": {
       "status": "approved",
       "approved_by": "lead_creative_director",
       "approved_at": "2026-10-18T18:00:00Z",
-      "notes": "Verified evidence citations against Jepsen and USENIX reports. Contrast meets WCAG AA (11.8:1). Palette and safe areas compliant."
+      "notes": "Creative direction approved; cited pages do not yet substantiate the precise benchmark claims. Verify or remove those claims before publication."
     }
   },
   "output": {

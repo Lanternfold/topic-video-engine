@@ -62,6 +62,10 @@ def render_video(
     except json.JSONDecodeError as e:
         raise ValidationError(f"Invalid JSON in spec file '{spec_path}': {e}") from e
 
+    # An explicit CLI brief overrides the embedded brief and must be the one validated.
+    if brief_override:
+        spec_data["creative_brief"] = str(brief_override)
+
     errors = validate_spec(spec_data, require_approval=require_approval)
     if errors:
         error_details = "\n  - " + "\n  - ".join(errors)
