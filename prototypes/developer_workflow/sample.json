@@ -34,19 +34,21 @@
       {
         "source_url": "https://pytest-split.readthedocs.io/en/latest/",
         "retrieved_at": "2026-10-11T20:10:00Z",
-        "note": "Documentation reference for --splits and timing durations cache"
+        "note": "Documentation reference for --splits and timing durations cache",
+        "verification_status": "unverified"
       },
       {
         "source_url": "https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs",
         "retrieved_at": "2026-10-11T20:12:00Z",
-        "note": "Matrix job execution pattern for parallel GitHub Actions runners"
+        "note": "Matrix job execution pattern for parallel GitHub Actions runners",
+        "verification_status": "unverified"
       }
     ],
     "approval": {
       "status": "approved",
       "approved_by": "engineering_lead",
       "approved_at": "2026-10-11T20:30:00Z",
-      "notes": "Verified terminal flags and runner telemetry against local pytest-split benchmark runs."
+      "notes": "Creative direction approved; verify each numerical claim against a recorded benchmark run before publication."
     }
   },
   "output": {
