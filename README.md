@@ -126,3 +126,12 @@ python tests/validate_video.py output/kinetic_editorial_demo.mp4 --width 1080 --
 - Creative brief schema: [`config/schemas/creative-brief.example.json`](config/schemas/creative-brief.example.json)
 - Human review checklist: [`CREATIVE_REVIEW_CHECKLIST.md`](CREATIVE_REVIEW_CHECKLIST.md)
 
+---
+
+## Project Planning & Progress
+
+- [Roadmap and milestones](ROADMAP.md)
+- [Template registry and status](docs/TEMPLATES.md)
+- [Production pipeline and quality gates](docs/PIPELINE.md)
+- [Decisions and constraints log](docs/DECISIONS.md)
+
