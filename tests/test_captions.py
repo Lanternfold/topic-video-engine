@@ -14,7 +14,7 @@ class TestTimedCaptions(unittest.TestCase):
             {"start": 1.0, "end": 2.0, "text": "Second"},
         ]
         self.assertEqual(active_caption(track, 0.0), "First")
-        self.assertIsNone(active_caption(track, 1.0 - 1e-6))
+        self.assertEqual(active_caption(track, 1.0 - 1e-6), "First")
         self.assertEqual(active_caption(track, 1.0), "Second")
         self.assertIsNone(active_caption(track, 2.0))
 
