@@ -19,6 +19,7 @@ from PIL import Image, ImageDraw
 
 from src.renderer.ffmpeg_writer import FFmpegWriter
 from src.renderer.timeline import apply_motion, build_timeline
+from src.renderer.captions import active_caption, draw_caption
 from src.renderer.validator import (
     ValidationError,
     audit_creative_direction,
@@ -146,11 +147,21 @@ def render_video(
             renderer = get_scene_renderer(scene_type, profile=profile_data, width=width, height=height)
             frame_img = renderer.render(scene)
 
-            if motion_preset == "static" or motion_strength == 0:
+            caption_track = scene.get("captions", [])
+            if (motion_preset == "static" or motion_strength == 0) and not caption_track:
                 writer.write_frame_repeated(frame_img, frame_count)
             else:
-                # Render every frame from the shared frame clock. No per-frame
-                # duration rounding occurs inside the scene loop.
+                # Motion and captions share the exact same frame clock.
+                safe_area = profile_data.get("layout", {}).get("mobile_safe_area", {})
+                brief_safe_area = (brief_data or {}).get("mobile_safe_area", {})
+                bottom_safe = max(
+                    0,
+                    brief_safe_area.get("bottom", safe_area.get("bottom", 180)),
+                )
+                side_safe = max(
+                    0,
+                    brief_safe_area.get("sides", safe_area.get("sides", 72)),
+                )
                 for frame_index in range(frame_count):
                     progress = frame_index / max(1, frame_count - 1)
                     motion_frame = apply_motion(
@@ -159,6 +170,15 @@ def render_video(
                         progress=progress,
                         strength=motion_strength,
                     )
+                    elapsed = frame_index / fps
+                    caption_text = active_caption(caption_track, elapsed) if caption_track else None
+                    if caption_text:
+                        motion_frame = draw_caption(
+                            motion_frame,
+                            caption_text,
+                            bottom_safe_area=bottom_safe,
+                            side_safe_area=side_safe,
+                        )
                     writer.write_frame(motion_frame)
 
     elapsed = time.time() - start_time
