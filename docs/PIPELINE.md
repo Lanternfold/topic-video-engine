@@ -32,13 +32,14 @@ For every factual claim:
 
 The frame-timeline layer schedules contiguous, zero-based scene frame ranges and supports deterministic per-frame camera transforms: `push_in`, `pull_out`, `pan_left`, and `pan_right`. Scene-relative caption tracks can now burn text into frames using half-open `[start, end)` intervals, with wrapping and a bottom/side safe-area offset. Motion and captions use the same frame clock.
 
-Optional external audio tracks can now be offset, gain-adjusted, mixed, and muxed onto the rendered video using FFmpeg. The mix is trimmed to the exact duration implied by the video frame count. Tracks can represent recorded narration, licensed music, or effects, but the engine does not generate narration or automatically align speech to captions.
+Optional external audio tracks can be offset, gain-adjusted, mixed, and muxed onto the rendered video using FFmpeg. The mix is trimmed to the exact duration implied by the video frame count. An optional Edge TTS helper now generates per-scene narration audio and caption chunks from TTS word-boundary events, writing a derived spec rather than overwriting the approved source. The narration helper rejects speech that exceeds a scene's approved duration.
 
 ## Production and validation gaps to close
 
-- Cross-scene transitions, narration generation, and word-level speech alignment remain unimplemented.
-- Audio sources are supplied as files; no TTS generation, automatic ducking, loudness normalization, or licensing verification is implemented.
-- Caption tracks are scene-relative and manually time-coded; automatic transcription or word-level sync is not implemented.
+- Cross-scene transitions and word-level audio ducking/loudness normalization remain unimplemented.
+- TTS depends on the optional Edge TTS package and service availability; voice choice and generated speech should be reviewed before publication.
+- Narration is split by scene and does not automatically rewrite scene duration. If speech does not fit, shorten the script or explicitly approve a longer scene.
+- Caption chunks use TTS word-boundary timing, but need visual review for punctuation, readability, and language-specific line breaks.
 - Validate caption safe-area placement visually on phone-sized previews.
 - Safe-area constraints need to be applied consistently by rendering and audit code.
 - Audit should run the relevant validation checks or clearly report which checks it omits.
