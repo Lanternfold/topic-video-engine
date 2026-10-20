@@ -1,24 +1,19 @@
 """Optional Edge TTS narration generation with word-timed scene captions.
 
-Install the optional dependency with: pip install 'edge-tts>=7.0.0'
+Install the optional dependency with: pip install -r requirements-narration.txt
 The core renderer does not require this package unless narration generation is used.
 """
 import argparse
 import asyncio
 import json
 from pathlib import Path
-import re
 from typing import Any, Dict, List, Tuple
-
 
 TICKS_PER_SECOND = 10_000_000
 
 
-def group_word_boundaries(
-    words: List[Dict[str, Any]],
-    max_words: int = 5,
-    max_duration: float = 2.5,
-) -> List[Dict[str, Any]]:
+def group_word_boundaries(words: List[Dict[str, Any]], max_words: int = 5,
+                          max_duration: float = 2.5) -> List[Dict[str, Any]]:
     """Group TTS word-boundary events into readable caption chunks."""
     if max_words < 1 or max_duration <= 0:
         raise ValueError("max_words and max_duration must be positive")
@@ -30,8 +25,9 @@ def group_word_boundaries(
             return
         start = max(0.0, chunk[0]["offset"] / TICKS_PER_SECOND)
         end = max(start, (chunk[-1]["offset"] + chunk[-1]["duration"]) / TICKS_PER_SECOND)
-        text = " ".join(item["text"].strip() for item in chunk if item["text"].strip()).strip()
-        text = re.sub(r"\\s+([,.;:!?])", r"\\1", text)
+        text = " ".join(item["text"].strip() for item in chunk if item["text"].strip())
+        for punctuation in (",", ".", ";", ":", "!", "?"):
+            text = text.replace(" " + punctuation, punctuation)
         if text and end > start:
             captions.append({"start": round(start, 3), "end": round(end, 3), "text": text})
         chunk.clear()
@@ -43,11 +39,8 @@ def group_word_boundaries(
             chunk_start = chunk[0]["offset"] / TICKS_PER_SECOND
             proposed_end = (word["offset"] + word["duration"]) / TICKS_PER_SECOND
             current_text = " ".join(item["text"].strip() for item in chunk if item["text"].strip())
-            if (
-                len(chunk) >= max_words
-                or proposed_end - chunk_start > max_duration
-                or current_text.rstrip().endswith((".", "!", "?", ";", ":"))
-            ):
+            if (len(chunk) >= max_words or proposed_end - chunk_start > max_duration
+                    or current_text.rstrip().endswith((".", "!", "?", ";", ":"))):
                 flush()
         chunk.append(word)
     flush()
@@ -55,12 +48,13 @@ def group_word_boundaries(
 
 
 async def synthesize_scene(text: str, voice: str, output_path: Path) -> Tuple[List[Dict[str, Any]], float]:
-    """Synthesize one scene and return word-timed caption chunks and speech end time."""
+    """Synthesize one scene and return caption chunks and speech end time."""
     try:
         import edge_tts
     except ImportError as exc:
-        raise RuntimeError("Narration requires the optional dependency: pip install 'edge-tts>=7.0.0'") from exc
-
+        raise RuntimeError(
+            "Narration requires the optional dependency: pip install -r requirements-narration.txt"
+        ) from exc
     output_path.parent.mkdir(parents=True, exist_ok=True)
     communicator = edge_tts.Communicate(text, voice)
     words: List[Dict[str, Any]] = []
@@ -83,12 +77,8 @@ async def synthesize_scene(text: str, voice: str, output_path: Path) -> Tuple[Li
     return group_word_boundaries(words), speech_end
 
 
-async def prepare_narrated_spec(
-    spec_path: Path,
-    output_spec_path: Path,
-    voice: str,
-    max_words: int = 5,
-) -> Path:
+async def prepare_narrated_spec(spec_path: Path, output_spec_path: Path, voice: str,
+                                max_words: int = 5) -> Path:
     """Create audio assets and a derived spec; never overwrite the approved source spec."""
     spec_path = spec_path.resolve()
     output_spec_path = output_spec_path.resolve()
@@ -101,35 +91,31 @@ async def prepare_narrated_spec(
 
     for index, scene in enumerate(scenes):
         script = scene.get("narration")
+        scene_duration = float(scene["duration"])
         if not isinstance(script, str) or not script.strip():
-            timeline_cursor += float(scene["duration"])
+            timeline_cursor += scene_duration
             continue
-
+        if "captions" in scene:
+            raise ValueError(
+                f"Scene {index + 1} already has captions. Revise the source spec before generating aligned captions."
+            )
         audio_path = asset_dir / f"scene_{index + 1:03d}.mp3"
         captions, speech_end = await synthesize_scene(script.strip(), voice, audio_path)
-        scene_duration = float(scene["duration"])
         if speech_end > scene_duration:
             audio_path.unlink(missing_ok=True)
             raise ValueError(
-                f"Scene {index + 1} narration lasts {speech_end:.2f}s but its approved "
-                f"duration is {scene_duration:.2f}s. Revise the script or approve a longer scene, "
-                "then rerun narration generation."
+                f"Scene {index + 1} narration lasts {speech_end:.2f}s but its approved duration is "
+                f"{scene_duration:.2f}s. Revise the script or approve a longer scene, then rerun."
             )
-        if "captions" in scene:
-            raise ValueError(
-                f"Scene {index + 1} already has captions. Remove or revise them in the source spec "
-                "before generating word-aligned captions."
-            )
+        # Keep rounded caption intervals inside the approved scene duration.
+        for caption in captions:
+            caption["start"] = min(caption["start"], max(0.0, scene_duration - 0.001))
+            caption["end"] = min(caption["end"], scene_duration)
+            if caption["end"] <= caption["start"]:
+                raise ValueError(f"Scene {index + 1} has a caption too short for millisecond timing.")
         scene["captions"] = captions
-        relative_audio = Path(
-            Path(output_spec_path.parent).name,
-            asset_dir.name,
-            audio_path.name,
-        )
-        # Keep paths relative to the derived spec, including when its parent is the repo root.
-        relative_audio = Path(asset_dir.name, audio_path.name)
         tracks.append({
-            "source": relative_audio.as_posix(),
+            "source": (Path(f"{output_spec_path.stem}_audio") / audio_path.name).as_posix(),
             "start": round(timeline_cursor, 3),
             "gain": 1.0,
             "duration": round(speech_end, 3),
@@ -143,10 +129,7 @@ async def prepare_narrated_spec(
         raise ValueError("Top-level 'audio' must be an object")
     existing_tracks = audio_cfg.get("tracks", [])
     if existing_tracks:
-        raise ValueError(
-            "Source spec already has audio tracks. Combine tracks intentionally rather than "
-            "silently replacing them."
-        )
+        raise ValueError("Source spec already has audio tracks. Combine tracks intentionally rather than replacing them.")
     audio_cfg["tracks"] = tracks
     output_spec_path.write_text(json.dumps(spec, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
     return output_spec_path
@@ -165,7 +148,7 @@ def main() -> int:
     except (ValueError, RuntimeError, OSError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
     print(f"Generated narration spec: {result}")
-    print("Next: inspect the generated captions and render the derived spec for review.")
+    print("Inspect generated voice and captions, then render the derived spec for review.")
     return 0
 
 
