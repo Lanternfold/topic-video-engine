@@ -30,7 +30,7 @@ def group_word_boundaries(
             return
         start = max(0.0, chunk[0]["offset"] / TICKS_PER_SECOND)
         end = max(start, (chunk[-1]["offset"] + chunk[-1]["duration"]) / TICKS_PER_SECOND)
-        text = "".join(item["text"] for item in chunk).strip()
+        text = " ".join(item["text"].strip() for item in chunk if item["text"].strip()).strip()
         text = re.sub(r"\\s+([,.;:!?])", r"\\1", text)
         if text and end > start:
             captions.append({"start": round(start, 3), "end": round(end, 3), "text": text})
@@ -42,7 +42,7 @@ def group_word_boundaries(
         if chunk:
             chunk_start = chunk[0]["offset"] / TICKS_PER_SECOND
             proposed_end = (word["offset"] + word["duration"]) / TICKS_PER_SECOND
-            current_text = "".join(item["text"] for item in chunk)
+            current_text = " ".join(item["text"].strip() for item in chunk if item["text"].strip())
             if (
                 len(chunk) >= max_words
                 or proposed_end - chunk_start > max_duration
@@ -108,7 +108,7 @@ async def prepare_narrated_spec(
         audio_path = asset_dir / f"scene_{index + 1:03d}.mp3"
         captions, speech_end = await synthesize_scene(script.strip(), voice, audio_path)
         scene_duration = float(scene["duration"])
-        if speech_end > scene_duration + 0.02:
+        if speech_end > scene_duration:
             audio_path.unlink(missing_ok=True)
             raise ValueError(
                 f"Scene {index + 1} narration lasts {speech_end:.2f}s but its approved "
