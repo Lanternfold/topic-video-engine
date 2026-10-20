@@ -213,6 +213,44 @@
           }
         }
       }
+    },
+    "audio": {
+      "type": "object",
+      "description": "Optional external audio tracks mixed and muxed after video rendering. Paths are relative to the content spec.",
+      "properties": {
+        "tracks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "source"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "start": {
+                "type": "number",
+                "minimum": 0,
+                "default": 0
+              },
+              "gain": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 4,
+                "default": 1
+              },
+              "duration": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
