@@ -131,7 +131,7 @@ async def prepare_narrated_spec(spec_path: Path, output_spec_path: Path, voice: 
     if existing_tracks:
         raise ValueError("Source spec already has audio tracks. Combine tracks intentionally rather than replacing them.")
     audio_cfg["tracks"] = tracks
-    output_spec_path.write_text(json.dumps(spec, indent=2, ensure_ascii=False) + "\\n", encoding="utf-8")
+    output_spec_path.write_text(json.dumps(spec, indent=2, ensure_ascii=False) + chr(10), encoding="utf-8")
     return output_spec_path
 
 
