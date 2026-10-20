@@ -99,6 +99,24 @@ python src/renderer/render.py --spec prototypes/kinetic_editorial/sample.json --
 
 ---
 
+## Optional Narration Generation
+
+Install the optional speech-generation dependency:
+
+```bash
+pip install -r requirements-narration.txt
+```
+
+Add a `narration` string to scenes in an **approved** content spec, then create a derived spec with narration audio and word-timed captions:
+
+```bash
+python -m src.renderer.narration path/to/approved-spec.json --voice en-US-AriaNeural
+```
+
+This writes `approved-spec.narrated.json` plus an adjacent audio-assets directory. The approved source file is not overwritten. Inspect the generated voice, caption timing, and audio assets, then render the derived spec normally. If speech exceeds a scene's approved duration, the helper stops and asks you to revise the script or approve a longer scene. Edge TTS requires network access and its availability/terms should be reviewed before production use.
+
+---
+
 ## Testing & Verification
 
 ### 1. Run Unit & Integration Tests

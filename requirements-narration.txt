@@ -1,0 +1,3 @@
+# Optional dependencies for narration generation only.
+# Install separately; the core renderer does not require these packages.
+edge-tts>=7.0.0

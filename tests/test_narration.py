@@ -23,6 +23,19 @@ class TestNarration(unittest.TestCase):
         self.assertEqual(captions[1]["text"], "Next")
         self.assertLess(captions[0]["start"], captions[0]["end"])
 
+    def test_word_boundaries_group_into_caption_chunks_without_leading_spaces(self):
+        words = [
+            {"text": "The", "offset": 0, "duration": TICKS_PER_SECOND // 5},
+            {"text": "mystery", "offset": TICKS_PER_SECOND // 5, "duration": TICKS_PER_SECOND // 4},
+            {"text": "begins.", "offset": TICKS_PER_SECOND // 2, "duration": TICKS_PER_SECOND // 4},
+            {"text": "Next", "offset": TICKS_PER_SECOND, "duration": TICKS_PER_SECOND // 4},
+        ]
+        captions = group_word_boundaries(words, max_words=5)
+        self.assertEqual(len(captions), 2)
+        self.assertEqual(captions[0]["text"], "The mystery begins.")
+        self.assertEqual(captions[1]["text"], "Next")
+        self.assertLess(captions[0]["start"], captions[0]["end"])
+
     def test_max_words_splits_caption_chunks(self):
         words = [
             {"text": f" word{i}", "offset": i * TICKS_PER_SECOND // 4, "duration": TICKS_PER_SECOND // 5}
